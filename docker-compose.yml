@@ -1,0 +1,65 @@
+version: '2'
+
+services:
+  certbot:
+    image: certbot/certbot:v1.4.0
+    depends_on:
+      - nginx
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - www-certbot-root:/var/www/html
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 10d & wait $${!}; done;'"
+    #command: certonly --webroot --webroot-path=/var/www/html --email assargin@gmail.com --agree-tos --no-eff-email --force-renewal -d janus-rtp-remoteadmin.kuzmichev.dev
+
+  nginx:
+    image: nginx:1.18-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    # TODO ? network_mode: host
+    volumes:
+      - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-conf/dh4096.pem:/etc/nginx/dh4096.pem
+      - certbot-etc:/etc/letsencrypt
+      - www-certbot-root:/var/www/html
+      - ./janus-static-html:/var/www/janus-gateway/html
+    restart: unless-stopped
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  janus:
+    build:
+      context: janus-gateway
+      dockerfile: Dockerfile
+    depends_on:
+      - certbot
+    volumes:
+      - ./janus-conf:/usr/local/etc/janus
+      - certbot-etc:/etc/letsencrypt
+    ports:
+      # REST
+#      - "8088:8088" INSECURE
+      - "8089:8089"
+      # REST: Admin & Monitor
+#      - "7088:7088" INSECURE
+      - "7889:7889"
+      # Websockets
+#      - "8188:8188" INSECURE
+      - "8989:8989"
+      # WebSockets: Admin & Monitor
+#      - "7188:7188" INSECURE
+      - "7989:7989"
+      # RTP/RTCP ports
+      - "10000-10200:10000-10200/udp"
+    restart: unless-stopped
+
+volumes:
+  # certs (FROM "certbot" FOR nginx FOR janus)
+  certbot-etc:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $PWD/certbot/etc-dir
+
+  # WWW certbot root directory, eg. for ACME challenge (FROM nginx FOR certbot)
+  www-certbot-root:
