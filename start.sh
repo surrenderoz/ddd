@@ -89,7 +89,7 @@ else
 fi
 
 # Decide to obtain cert or not
-if [[ -d "$data_path/accounts" ]]; then
+if [[ -d "$data_path/live/$LIVE_DOMAIN" ]]; then
   NEED_TO_OBTAIN_CERT=${LIVE_FORCE_RECREATE_CERT}
 else
   NEED_TO_OBTAIN_CERT=1
