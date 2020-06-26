@@ -28,22 +28,6 @@ else
   LIVE_DOMAIN="$DOMAIN";
 fi
 
-# staging
-if [[ -z "$STAGING" ]]; then
-  if [[ -z "$SAVED_STAGING" ]]; then
-    read -p "Is it STAGING environment (will create TEST certificates for $LIVE_DOMAIN) (y/N) " decision
-    if [[ "$decision" != "Y" ]] && [[ "$decision" != "y" ]]; then
-      LIVE_STAGING=1;
-    else
-      LIVE_STAGING=0;
-    fi
-  else
-    LIVE_STAGING="$SAVED_STAGING";
-  fi
-else
-  LIVE_STAGING="$STAGING";
-fi
-
 # email
 if [[ -z "$EMAIL" ]]; then
   if [[ -z "$SAVED_EMAIL" ]]; then
@@ -61,9 +45,9 @@ if [[ -z "$SHARE_EMAIL" ]]; then
   if [[ -z "$SAVED_SHARE_EMAIL" ]]; then
     read -p "Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot)? (y/N) " decision
     if [[ "$decision" != "Y" ]] && [[ "$decision" != "y" ]]; then
-      LIVE_SHARE_EMAIL=1;
-    else
       LIVE_SHARE_EMAIL=0;
+    else
+      LIVE_SHARE_EMAIL=1;
     fi
   else
     LIVE_SHARE_EMAIL="$SAVED_SHARE_EMAIL";
@@ -72,14 +56,30 @@ else
   LIVE_SHARE_EMAIL="$SHARE_EMAIL";
 fi
 
+# staging
+if [[ -z "$STAGING" ]]; then
+  if [[ -z "$SAVED_STAGING" ]]; then
+    read -p "Is it STAGING environment (will create TEST certificates for $LIVE_DOMAIN) (y/N) " decision
+    if [[ "$decision" != "Y" ]] && [[ "$decision" != "y" ]]; then
+      LIVE_STAGING=0;
+    else
+      LIVE_STAGING=1;
+    fi
+  else
+    LIVE_STAGING="$SAVED_STAGING";
+  fi
+else
+  LIVE_STAGING="$STAGING";
+fi
+
 # Recreate certificate when it already exists
 if [[ -z "$FORCE_RECREATE_CERT" ]]; then
   if [[ -z "$SAVED_FORCE_RECREATE_CERT" ]]; then
     read -p "Recreate and replace existing certificate on start in the future? (y/N) " decision
     if [[ "$decision" != "Y" ]] && [[ "$decision" != "y" ]]; then
-      LIVE_FORCE_RECREATE_CERT=1;
-    else
       LIVE_FORCE_RECREATE_CERT=0;
+    else
+      LIVE_FORCE_RECREATE_CERT=1;
     fi
   else
     LIVE_FORCE_RECREATE_CERT="$SAVED_FORCE_RECREATE_CERT";
