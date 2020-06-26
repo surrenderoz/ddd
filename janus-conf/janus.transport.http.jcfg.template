@@ -53,15 +53,15 @@ admin: {
 # what must be returned in 'Access-Control-Allow-Origin'. More details:
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 cors: {
-	allow_origin = "https://janus-rtp-remoteadmin.kuzmichev.dev"
+	allow_origin = "https://{{ DOMAIN }}"
 }
 
 # Certificate and key to use for HTTPS, if enabled (and passphrase if needed).
 # You can also disable insecure protocols and ciphers by configuring the
 # 'ciphers' property accordingly (no limitation by default).
 certificates: {
-	cert_pem = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/fullchain.pem"
-	cert_key = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/privkey.pem"
+	cert_pem = "/etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem"
+	cert_key = "/etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem"
 	#cert_pwd = "secretpassphrase"
 	#ciphers = "PFS:-VERS-TLS1.0:-VERS-TLS1.1:-3DES-CBC:-ARCFOUR-128"
 }

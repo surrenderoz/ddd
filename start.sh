@@ -88,6 +88,14 @@ else
   LIVE_FORCE_RECREATE_CERT="$FORCE_RECREATE_CERT";
 fi
 
+# Process templated configs
+for filename in ./janus-conf/*.template; do
+  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" filename > "${filename%.*}"
+done
+for filename in ./nginx-conf/*.template; do
+  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" filename > "${filename%.*}"
+done
+
 # Decide to obtain cert or not
 if [[ -d "$data_path/live/$LIVE_DOMAIN" ]]; then
   NEED_TO_OBTAIN_CERT=${LIVE_FORCE_RECREATE_CERT}

@@ -9,7 +9,7 @@ http {
     server {
         listen 80;
         listen [::]:80;
-        server_name .janus-rtp-remoteadmin.kuzmichev.dev;
+        server_name .{{ DOMAIN }};
 
         # LetsEncrypt ACME Challenge
         location ~ /.well-known/acme-challenge {
@@ -27,10 +27,10 @@ http {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
 
-        server_name .janus-rtp-remoteadmin.kuzmichev.dev;
+        server_name .{{ DOMAIN }};
 
-        ssl_certificate /etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem;
 
         server_tokens off;
         ssl_session_tickets off;

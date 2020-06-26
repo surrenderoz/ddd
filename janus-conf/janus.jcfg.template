@@ -172,8 +172,8 @@ general: {
 # Finally, by default NIST P-256 certificates are generated (see #1997),
 # but RSA generation is still supported if you set 'rsa_private_key' to 'true'.
 certificates: {
-	cert_pem = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/fullchain.pem"
-	cert_key = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/privkey.pem"
+	cert_pem = "/etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem"
+	cert_key = "/etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem"
 	#cert_pwd = "secretpassphrase"
 	#dtls_accept_selfsigned = false
 	#dtls_ciphers = "your-desired-openssl-ciphers"

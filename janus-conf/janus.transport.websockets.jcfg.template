@@ -39,7 +39,7 @@ admin: {
 
 # Certificate and key to use for any secure WebSocket server, if enabled (and passphrase if needed).
 certificates: {
-	cert_pem = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/fullchain.pem"
-	cert_key = "/etc/letsencrypt/live/janus-rtp-remoteadmin.kuzmichev.dev/privkey.pem"
+	cert_pem = "/etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem"
+	cert_key = "/etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem"
 	#cert_pwd = "secretpassphrase"
 }
