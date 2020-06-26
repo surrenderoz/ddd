@@ -90,10 +90,10 @@ fi
 
 # Process templated configs
 for filename in ./janus-conf/*.template; do
-  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" filename > "${filename%.*}"
+  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
 for filename in ./nginx-conf/*.template; do
-  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" filename > "${filename%.*}"
+  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
 
 # Decide to obtain cert or not
