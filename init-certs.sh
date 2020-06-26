@@ -5,9 +5,10 @@ if ! [[ -x "$(command -v docker-compose)" ]]; then
   exit 1
 fi
 
+staging=1  # Set to 1 if you're testing your setup to avoid hitting request limits
 domains=(janus-rtp-remoteadmin.kuzmichev.dev)
 email="assargin@gmail.com" # Adding a valid address is strongly recommended
-staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+share_email_with_eff=0  # Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot)
 
 data_path="./certbot/etc-dir"
 rsa_key_size=4096
@@ -58,10 +59,17 @@ esac
 # Enable staging mode if needed
 if [[ $staging != "0" ]]; then staging_arg="--staging"; fi
 
+# Sharing email with EFF
+case "$share_email_with_eff" in
+  "1") eff_arg="--eff-email" ;;
+  "0") eff_arg="--no-eff-email" ;;
+esac
+
 docker-compose run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
     $email_arg \
+    $eff_arg
     $domain_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
