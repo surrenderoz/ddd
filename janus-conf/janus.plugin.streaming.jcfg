@@ -252,14 +252,15 @@ rtp-test: {
     is_private = false  # TODO: true
     secret = "adminpwd"
     pin = "viewpwd"
-    audio = false
+    audio = true  # TODO: false
     video = true
     data = false
 
-    # audioport = local port for receiving audio frames
+    # TODO: comment audio options
+    audioport = 5030  # audioport = local port for receiving audio frames
     # audioiface = network interface or IP address to bind to, if any (binds to all otherwise)
-    # audiopt = <audio RTP payload type> (e.g., 111)
-    # audiortpmap = RTP map of the audio codec (e.g., opus/48000/2)
+    audiopt = 111 # audiopt = <audio RTP payload type> (e.g., 111)
+    audiortpmap = "opus/48000/2"  # audiortpmap = RTP map of the audio codec (e.g., opus/48000/2)
 
     videoport = 5020  # TODO: will be provide automatically
     # videoiface = network interface or IP address to bind to, if any (binds to all otherwise)
