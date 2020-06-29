@@ -93,7 +93,7 @@ general: {
 
 	# By default, integers are used as a unique ID for both mountpoints. In case
 	# you want to use strings instead (e.g., a UUID), set string_ids to true.
-	#string_ids = true
+	string_ids = true
 }
 
 #
@@ -243,3 +243,32 @@ file-ondemand-sample: {
 	#rtsp_user = "username"
 	#rtsp_pwd = "password"
 #}
+
+rtp-test: {
+    type = rtp
+
+    id = "RTPtest"
+    description = "This is RTP Test for Headwind"
+    is_private = false  # TODO: true
+    secret = "adminpwd"
+    pin = "viewpwd"
+    audio = false
+    video = true
+    data = false
+
+    # audioport = local port for receiving audio frames
+    # audioiface = network interface or IP address to bind to, if any (binds to all otherwise)
+    # audiopt = <audio RTP payload type> (e.g., 111)
+    # audiortpmap = RTP map of the audio codec (e.g., opus/48000/2)
+
+    videoport = 5020  # TODO: will be provide automatically
+    # videoiface = network interface or IP address to bind to, if any (binds to all otherwise)
+    # videopt = <video RTP payload type> (e.g., 100)
+    # videortpmap = RTP map of the video codec (e.g., VP8/90000)
+    videobufferkf = true # TODO: experimental feature
+    # videosimulcast = true|false (do|don't enable video simulcasting)
+    # videoport2 = second local port for receiving video frames (only for rtp, and simulcasting)
+    # videoport3 = third local port for receiving video frames (only for rtp, and simulcasting)
+    # videoskew = true  # TODO: experimental feature
+    # videosvc = true|false (whether the video will have SVC support; works only for VP9-SVC, default=false)
+}
