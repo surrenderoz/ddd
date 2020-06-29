@@ -245,7 +245,7 @@ file-ondemand-sample: {
 #}
 
 rtp-test: {
-    type = rtp
+    type = "rtp"
 
     id = "RTPtest"
     description = "This is RTP Test for Headwind"
