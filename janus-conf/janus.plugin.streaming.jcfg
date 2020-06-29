@@ -263,8 +263,8 @@ rtp-test: {
 
     videoport = 5020  # TODO: will be provide automatically
     # videoiface = network interface or IP address to bind to, if any (binds to all otherwise)
-    # videopt = <video RTP payload type> (e.g., 100)
-    # videortpmap = RTP map of the video codec (e.g., VP8/90000)
+    videopt = 100
+    videortpmap = "VP8/90000"
     videobufferkf = true # TODO: experimental feature
     # videosimulcast = true|false (do|don't enable video simulcasting)
     # videoport2 = second local port for receiving video frames (only for rtp, and simulcasting)
