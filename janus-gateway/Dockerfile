@@ -62,14 +62,14 @@ RUN cd /tmp/sources/ && git clone https://github.com/warmcat/libwebsockets.git \
     && make && make install
 
 # Build BoringSSL (instead of OpenSSL, for DTLS timeout)
-#RUN cd /tmp/sources/ && git clone https://boringssl.googlesource.com/boringssl \
-#    && cd boringssl \
-#    && git checkout 78b3337a10a7f7b3495b6cb8140a74e265290898 \
-#    && sed -i s/" -Werror"//g CMakeLists.txt \
-#    && mkdir -p build && cd build \
-#    && cmake -DCMAKE_CXX_FLAGS="-lrt" .. && make && cd .. \
-#    && mkdir -p /opt/boringssl && cp -R include /opt/boringssl/ && mkdir -p /opt/boringssl/lib \
-#    && cp build/ssl/libssl.a /opt/boringssl/lib/ && cp build/crypto/libcrypto.a /opt/boringssl/lib/
+RUN cd /tmp/sources/ && git clone https://boringssl.googlesource.com/boringssl \
+    && cd boringssl \
+    && git checkout 78b3337a10a7f7b3495b6cb8140a74e265290898 \
+    && sed -i s/" -Werror"//g CMakeLists.txt \
+    && mkdir -p build && cd build \
+    && cmake -DCMAKE_CXX_FLAGS="-lrt" .. && make && cd .. \
+    && mkdir -p /opt/boringssl && cp -R include /opt/boringssl/ && mkdir -p /opt/boringssl/lib \
+    && cp build/ssl/libssl.a /opt/boringssl/lib/ && cp build/crypto/libcrypto.a /opt/boringssl/lib/
 
 # Build Janus Gateway
 RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git \
@@ -79,8 +79,8 @@ RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git 
     && ./configure \
       # General
       --prefix=/usr/local \
-#      --enable-boringssl \
-#      --enable-dtls-settimeout \
+      --enable-boringssl \
+      --enable-dtls-settimeout \
       # Transports
       --disable-rabbitmq --disable-mqtt --disable-unix-sockets --disable-nanomsg \
       # Plugins
