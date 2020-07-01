@@ -12,6 +12,8 @@ services:
 
   nginx:
     image: nginx:1.18-alpine
+    depends_on:
+      - janus
     ports:
       - "80:80"
       - "443:443"
@@ -28,8 +30,6 @@ services:
     build:
       context: janus-gateway
       dockerfile: Dockerfile
-    depends_on:
-      - certbot
     volumes:
       - ./janus-conf:/usr/local/etc/janus
       - certbot-etc:/etc/letsencrypt
