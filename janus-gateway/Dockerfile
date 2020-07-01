@@ -141,7 +141,7 @@ RUN mkdir /usr/local/etc/janus
 EXPOSE 8089 7889 8989 7989
 
 # INSECURE ports (REST, Admin&Monitor REST, WebSockets, Admin&Monitor WebSockets)
-# EXPOSE 8088 7088 8188 7188
+EXPOSE 8088 7088 8188 7188
 
 # RTP/RTCP ports
 EXPOSE 10000-10200/udp
