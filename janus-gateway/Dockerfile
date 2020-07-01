@@ -84,7 +84,8 @@ RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git 
       # Transports
       --disable-rabbitmq --disable-mqtt --disable-unix-sockets --disable-nanomsg \
       # Plugins
-      --disable-plugin-audiobridge --disable-plugin-recordplay --disable-plugin-sip --disable-plugin-nosip --disable-plugin-videocall --disable-plugin-videoroom --disable-plugin-voicemail \
+      --disable-plugin-audiobridge --disable-plugin-recordplay --disable-plugin-sip --disable-plugin-nosip --disable-plugin-videocall --disable-plugin-voicemail \
+      # TODO --disable-plugin-audiobridge --disable-plugin-recordplay --disable-plugin-sip --disable-plugin-nosip --disable-plugin-videocall --disable-plugin-videoroom --disable-plugin-voicemail \
     && make && make install
 
 
