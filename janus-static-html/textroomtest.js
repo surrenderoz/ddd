@@ -59,7 +59,7 @@ var janus = null;
 var textroom = null;
 var opaqueId = "textroomtest-"+Janus.randomString(12);
 
-var myroom = 1234;	// Demo room
+var myroom = "1234";	// Demo room
 var myusername = null;
 var myid = null;
 var participants = {}
