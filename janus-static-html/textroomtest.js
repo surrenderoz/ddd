@@ -60,6 +60,7 @@ var textroom = null;
 var opaqueId = "textroomtest-"+Janus.randomString(12);
 
 var myroom = "1234";	// Demo room
+var myroom = "rtp-remote-admin";	// Demo room
 var myusername = null;
 var myid = null;
 var participants = {}
