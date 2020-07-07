@@ -57,7 +57,7 @@ services:
       context: rtp-source
       dockerfile: Dockerfile
     network_mode: host
-    restart: no
+    restart: "no"
     env_file:
       - .env
 
