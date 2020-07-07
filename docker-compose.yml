@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   certbot:
@@ -51,6 +51,15 @@ services:
 #      # RTP/RTCP ports
 #      - "10000-10200:10000-10200/udp"
     restart: unless-stopped
+
+  rtp-source:
+    build:
+      context: rtp-source
+      dockerfile: Dockerfile
+    network_mode: host
+    restart: no
+    env_file:
+      - .env
 
 volumes:
   # certs (FROM "certbot" FOR nginx FOR janus)
