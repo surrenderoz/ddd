@@ -233,7 +233,11 @@ class JanusPluginTextRoom(JanusBasePlugin):
 
         @_dc.on("open")
         def trick():
-            _dc.send('{"textroom": "list", "transaction": "trick_transaction"}')
+            f = asyncio.ensure_future(Future())
+            tid = transaction_id()
+            self._dc_transaction_futures[tid] = f
+
+            _dc.send(json.dumps({"textroom": "list", "transaction": tid}))
             _dc.close()
 
     async def join_room(self, _id: str, username: str = '', display: str = '', pin: str = '') -> "Future":
