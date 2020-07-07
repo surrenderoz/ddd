@@ -88,7 +88,7 @@ async def run(janus: "Janus"):
     await textroom.ready()
     room = await textroom.create_room(_id=room_id, pin=pin)
     room_id = room['room']
-    await textroom.join_room(room_id, username=username, display=display_name)
+    await textroom.join_room(room_id, username=username, display=display_name, pin=pin)
 
     # Janus streaming mountpoint setup
     streaming = await session.attach_streaming()
