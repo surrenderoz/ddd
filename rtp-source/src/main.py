@@ -181,12 +181,12 @@ if __name__ == "__main__":
 
     url = f'https://{janus_host}:8089/janus'
 
-    logging.info('==================================== ')
-    logging.info('=== RTP Source configured:')
-    logging.info('=== Janus HOST: %s:', janus_host)
-    logging.info('=== Janus REST API url: %s', url)
-    logging.info('=== Verbose Debug: %s', bool(verbose))
-    logging.info('==================================== ')
+    print('====================================')
+    print('=== RTP Source configured:')
+    print('=== Janus HOST: %s:', janus_host)
+    print('=== Janus REST API url: %s', url)
+    print('=== Verbose Debug: %s', bool(verbose))
+    print('====================================')
 
     # Janus & loop setup
     janus_instance = Janus(url)
