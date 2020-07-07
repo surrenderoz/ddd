@@ -1,0 +1,214 @@
+import argparse
+import asyncio
+import logging
+import coloredlogs
+import os
+import signal
+from asyncio import CancelledError
+from contextlib import suppress
+from typing import Set, Dict, List, Union
+
+from aiortc import RTCPeerConnection
+
+from janus import Janus
+from janus.utils import random_string
+
+pcs: Set["RTCPeerConnection"] = set()
+
+
+class GStreaming:
+    process: Union["asyncio.subprocess.Process", None] = None
+    command: List[str] = [
+        "gst-launch-1.0", "audiotestsrc", "wave=ticks", "!",
+        "audioresample", "!", "audio/x-raw,channels=1,rate=16000", "!",
+        "opusenc", "bitrate=20000", "!",
+        "rtpopuspay", "!", "udpsink", "host=HOST", "port=AUDIOPORT",
+        "videotestsrc", "pattern=ball", "!",
+        "video/x-raw,width=320,height=240,framerate=15/1", "!",
+        "videoscale", "!", "videorate", "!", "videoconvert", "!", "timeoverlay", "!",
+        "vp8enc", "error-resilient=1", "!",
+        "rtpvp8pay", "!", "udpsink", "host=HOST", "port=VIDEOPORT"
+    ]
+
+    def __init__(self, host: str, videoport: int, audioport: int):
+        self.vars: Dict[str, str] = {
+            'HOST': host,
+            'AUDIOPORT': audioport,
+            'VIDEOPORT': videoport,
+        }
+
+    def _prepare_command(self):
+        cmd = [c for c in self.command]
+        for var, val in self.vars.items():
+            cmd = [c.replace(str(var), str(val)) for c in cmd]
+        logging.debug('GStreaming: prepared cmd: %s', cmd)
+        return cmd
+
+    def is_running(self):
+        ret = self.process and self.process.returncode is None
+        logging.debug('GStreaming.is_running = %s', ret)
+        return ret
+
+    async def start_streaming(self):
+        if self.is_running():
+            self.stop_streaming()
+
+        self.process = await asyncio.create_subprocess_exec(
+            *self._prepare_command(), stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        )
+        return self.process
+
+    def stop_streaming(self):
+        if self.is_running():
+            self.process.terminate()
+            self.process = None
+
+
+async def run(janus: "Janus"):
+    # PC setup
+    pc = RTCPeerConnection()
+    pcs.add(pc)
+
+    # prepare credentials
+    username = random_string(6)
+    display_name = 'rtp-source-' + username
+    room_id = 'rtp-remote-admin'
+    pin = random_string(length=4, letters=False)
+
+    # Janus session setup
+    session = janus.create_session()
+    await session.init()
+
+    # Janus textroom, datachannel and room setup
+    textroom = await session.attach_textroom()
+    textroom.pc = pc
+    textroom.setup_pc()
+    await textroom.get_offer()
+    await textroom.send_answer()
+    await textroom.ready()
+    room = await textroom.create_room(_id=room_id, pin=pin)
+    room_id = room['room']
+    await textroom.join_room(room_id, username=username, display=display_name)
+
+    # Janus streaming mountpoint setup
+    streaming = await session.attach_streaming()
+    stream = await streaming.create(is_private=False, pin=pin)
+    stream_id = stream['stream']['id']
+    stream_audioport = stream['stream']['audio_port']
+    stream_videoport = stream['stream']['video_port']
+    gstreaming = GStreaming(janus.url_hostname, videoport=stream_videoport, audioport=stream_audioport)
+
+    # print credentials
+    print(f'============= CONNECT CREDENTIALS =============')
+    print(f'===')
+    print(f'=== ROOM ID: {room_id}')
+    print(f'=== STREAM ID: {stream_id}')
+    print(f'=== PIN: {pin}')
+    print(f'===')
+    print(f'===============================================')
+
+    try:
+        while True:
+            message = await textroom.message()
+            logging.info('got incoming message: %s', message)
+            if message['textroom'] == 'join':
+                await textroom.send_to_room(
+                    room_id, text=f'Hi {message["display"]}. I have "start", "stop" and "quit" commands, '
+                                  f'other messages I will replay')
+            elif message['textroom'] == 'message':
+                sender: str = message['from']
+                text: str = message['text']
+                if message['from'] != username:
+                    # START STREAMING
+                    if text.lower().startswith("start"):
+                        if not gstreaming.is_running():
+                            await gstreaming.start_streaming()
+                            await textroom.send_to_room(room_id, text='Starting GStreaming ..')
+                        else:
+                            await textroom.send_to_room(room_id, text='Already started!')
+                    # STOP STREAMING
+                    elif text.lower().startswith("stop"):
+                        if gstreaming.is_running():
+                            gstreaming.stop_streaming()
+                            await textroom.send_to_room(room_id, text='Stopping GStreaming ..')
+                        else:
+                            await textroom.send_to_room(room_id, text='Nothing to stop.')
+                    # QUIT
+                    elif text.lower() == 'quit':
+                        await textroom.send_to_room(room_id, text=f'Bye {sender}!')
+                        break
+                    else:
+                        await textroom.send_to_room(
+                            room_id, text=f'{sender}, you said \"{text}\".')
+    finally:
+        gstreaming.stop_streaming()
+        await streaming.destroy(_id=stream_id)
+        await textroom.destroy_room(_id=room_id)
+
+
+async def shutdown_sig_handler(s):
+    logging.info(f"received exit signal {s.name}...")
+    tasks = [task for task in asyncio.Task.all_tasks() if task is not asyncio.tasks.Task.current_task()]
+    logging.debug(f"waiting for {len(tasks)} tasks..")
+    for task in tasks:
+        task.cancel()
+        with suppress(asyncio.CancelledError):
+            await task
+    await asyncio.gather(*tasks, return_exceptions=True)
+    for task in enumerate(tasks):
+        logging.debug('finished awaited task "%s"', task)
+    logging.info(f"gracefully handled {s.name}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Janus")
+    parser.add_argument("--run", default=False, const=True, nargs='?'),
+    args = parser.parse_args()
+    if not args.run:
+        logging.error('rtp-source need "--run" arg to start')
+        exit(0)
+
+    # vars
+    verbose = int(os.environ.get('VERBOSE', 0))
+    janus_host = bool(os.environ.get('JANUS_HOST', ''))
+
+    if not janus_host:
+        if verbose:
+            janus_host = 'headwind-janus-test.kuzmichev.dev'
+        else:
+            logging.error('JANUS_HOST environment MUST BE set')
+            exit()
+
+    url = f'https://{janus_host}:8089/janus'
+
+    # Janus & loop setup
+    janus_instance = Janus(url)
+    loop = asyncio.get_event_loop()
+
+    # signal handlers setup
+    signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT, signal.SIGQUIT)
+    for signal in signals:
+        loop.add_signal_handler(signal, lambda: asyncio.ensure_future(shutdown_sig_handler(signal)))
+
+    # logging setup
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+    )
+    coloredlogs.install()
+    if verbose:
+        loop.set_debug(True)
+
+    # run
+    try:
+        loop.run_until_complete(
+            run(janus=janus_instance)
+        )
+    except CancelledError:
+        pass
+    finally:
+        loop.run_until_complete(janus_instance.destroy_all_sessions())
+        loop.run_until_complete(asyncio.gather(*[pc.close() for pc in pcs]))
+        loop.stop()
+        loop.close()
+        logging.info('finally quit')
