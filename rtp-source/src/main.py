@@ -181,6 +181,13 @@ if __name__ == "__main__":
 
     url = f'https://{janus_host}:8089/janus'
 
+    logging.info('==================================== ')
+    logging.info('=== RTP Source configured:')
+    logging.info('=== Janus HOST: %s:', janus_host)
+    logging.info('=== Janus REST API url: %s', url)
+    logging.info('=== Verbose Debug: %s', bool(verbose))
+    logging.info('==================================== ')
+
     # Janus & loop setup
     janus_instance = Janus(url)
     loop = asyncio.get_event_loop()
