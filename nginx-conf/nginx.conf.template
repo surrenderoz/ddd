@@ -74,7 +74,7 @@ http {
 
         ## RTP Web Admin
         location ^~ /rtp-web-admin/ {
-            alias /var/www/rtp-web-admin/html;
+            alias /var/www/rtp-web-admin/html/;
             index index.html;
 
             proxy_http_version 1.1;
