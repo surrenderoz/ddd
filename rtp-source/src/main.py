@@ -170,32 +170,7 @@ if __name__ == "__main__":
 
     # vars
     verbose = int(os.environ.get('VERBOSE', 0))
-    janus_host = bool(os.environ.get('JANUS_HOST', ''))
-
-    if not janus_host:
-        if verbose:
-            janus_host = 'headwind-janus-test.kuzmichev.dev'
-        else:
-            logging.error('JANUS_HOST environment MUST BE set')
-            exit()
-
-    url = f'https://{janus_host}:8089/janus'
-
-    print('====================================')
-    print('=== RTP Source configured:')
-    print('=== Janus HOST: %s:', janus_host)
-    print('=== Janus REST API url: %s', url)
-    print('=== Verbose Debug: %s', bool(verbose))
-    print('====================================')
-
-    # Janus & loop setup
-    janus_instance = Janus(url)
-    loop = asyncio.get_event_loop()
-
-    # signal handlers setup
-    signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT, signal.SIGQUIT)
-    for signal in signals:
-        loop.add_signal_handler(signal, lambda: asyncio.ensure_future(shutdown_sig_handler(signal)))
+    janus_host = os.environ.get('JANUS_HOST', '')
 
     # logging setup
     logging.basicConfig(
@@ -203,8 +178,32 @@ if __name__ == "__main__":
         format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
     )
     coloredlogs.install()
+
+    if not janus_host:
+        if verbose:
+            janus_host = 'headwind-janus-test.kuzmichev.dev'
+        else:
+            logging.error('JANUS_HOST environment MUST BE set')
+            exit()
+    url = f'https://{janus_host}:8089/janus'
+
+    logging.info('====================================')
+    logging.info('=== RTP Source configured:')
+    logging.info('=== Janus HOST: %s:', janus_host)
+    logging.info('=== Janus REST API url: %s', url)
+    logging.info('=== Verbose Debug: %s', bool(verbose))
+    logging.info('====================================')
+
+    # Janus & loop setup
+    janus_instance = Janus(url)
+    loop = asyncio.get_event_loop()
     if verbose:
         loop.set_debug(True)
+
+    # signal handlers setup
+    signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT, signal.SIGQUIT)
+    for signal in signals:
+        loop.add_signal_handler(signal, lambda: asyncio.ensure_future(shutdown_sig_handler(signal)))
 
     # run
     try:
