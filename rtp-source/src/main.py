@@ -11,7 +11,7 @@ from typing import Set, Dict, List, Union
 from aiortc import RTCPeerConnection
 
 from janus import Janus
-from janus.utils import random_string
+from janus.utils import random_string, random_uuid
 
 pcs: Set["RTCPeerConnection"] = set()
 
@@ -69,11 +69,15 @@ async def run(janus: "Janus"):
     pc = RTCPeerConnection()
     pcs.add(pc)
 
-    # prepare credentials
-    username = random_string(6)
+    # prepare ids and credentials
+    entrypoints_uuid = random_uuid()
+    room_id = 'rtp-remote-admin'  # todo: = entrypoints_uuid
+    stream_id = entrypoints_uuid
+
+    pin = ''  # TODO: random_string(length=4, letters=False)
+
+    username = random_string(6, digits=False)
     display_name = 'rtp-source-' + username
-    room_id = 'rtp-remote-admin'
-    pin = random_string(length=4, letters=False)
 
     # Janus session setup
     session = janus.create_session()
@@ -92,7 +96,7 @@ async def run(janus: "Janus"):
 
     # Janus streaming mountpoint setup
     streaming = await session.attach_streaming()
-    stream = await streaming.create(is_private=False, pin=pin)
+    stream = await streaming.create(_id=stream_id, is_private=False, pin=pin)
     stream_id = stream['stream']['id']
     stream_audioport = stream['stream']['audio_port']
     stream_videoport = stream['stream']['video_port']
