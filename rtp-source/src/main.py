@@ -115,10 +115,18 @@ async def run(janus: "Janus"):
         while True:
             message = await textroom.message()
             logging.info('got incoming message: %s', message)
+
+            # Somebody JOINED
             if message['textroom'] == 'join':
-                await textroom.send_to_room(
-                    room_id, text=f'Hi {message["display"]}. I have "start", "stop" and "quit" commands, '
-                                  f'other messages I will replay')
+                if message['username'] != username:
+                    await textroom.send_to_room(
+                        room_id, text=f'Hi {message["display"]}. I have "start", "stop" and "quit" commands, '
+                                      f'other messages I will replay. '
+                                      f'GStreaming will be started asap in honour of your joining to us! :)')
+                    if not gstreaming.is_running():
+                        await gstreaming.start_streaming()
+
+            # MESSAGE from somebody
             elif message['textroom'] == 'message':
                 sender: str = message['from']
                 text: str = message['text']
