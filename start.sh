@@ -89,13 +89,15 @@ else
 fi
 
 # Process templated configs
-for filename in ./janus-conf/{.,}*.template; do
+shopt -s dotglob
+
+for filename in ./janus-conf/*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
-for filename in ./nginx-conf/{.,}*.template; do
+for filename in ./nginx-conf/*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
-for filename in ./{.,}*.template; do
+for filename in ./*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
 
