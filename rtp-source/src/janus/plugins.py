@@ -343,7 +343,8 @@ class JanusPluginStreaming(JanusBasePlugin):
         return res['plugindata']['data']['info']
 
     async def create(
-            self, _type: str = 'rtp', _id: str = '', secret: str = '', pin: str = '', is_private: bool = True,
+            self, _type: str = 'rtp', _id: str = '', name: str = '', description: str = '',
+            secret: str = '', pin: str = '', is_private: bool = True,
             audio: bool = True, audioport: int = 0, audiopt: int = 111, audiortpmap: str = "opus/48000/2",
             video: bool = True, videoport: int = 0, videopt: int = 100, videortpmap: str = "VP8/90000",
             videobufferkf: bool = False,  # experimental feature
@@ -363,6 +364,10 @@ class JanusPluginStreaming(JanusBasePlugin):
             body['_id'] = _id
             body['name'] = _id
             body['description'] = _id
+        if name:
+            body['name'] = name
+        if description:
+            body['description'] = description
         if secret:
             body['secret'] = secret
         if pin:
