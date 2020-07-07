@@ -59,7 +59,7 @@ services:
     network_mode: host
     restart: "no"
     env_file:
-      - .env
+      - rtp-source/.env
 
 volumes:
   # certs (FROM "certbot" FOR nginx FOR janus)

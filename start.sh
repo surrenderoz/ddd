@@ -97,7 +97,7 @@ done
 for filename in ./nginx-conf/*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
-for filename in ./*.template; do
+for filename in ./rtp-source/*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
 
