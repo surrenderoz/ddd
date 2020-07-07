@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 
 
 def random_string(length: int, letters: bool = True, digits: bool = True) -> str:
@@ -13,6 +14,10 @@ def random_string(length: int, letters: bool = True, digits: bool = True) -> str
 
 def transaction_id():
     return random_string(12)
+
+
+def random_uuid():
+    return str(uuid.uuid4())
 
 
 def normalize_url(base_url: str, *args: str):
