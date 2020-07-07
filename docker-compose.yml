@@ -24,6 +24,7 @@ services:
       - certbot-etc:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
       - ./janus-static-html:/var/www/janus-gateway/html
+      - ./rtp-web-admin:/var/www/rtp-web-admin/html
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 

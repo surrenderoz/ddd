@@ -72,6 +72,18 @@ http {
             proxy_cache_bypass $http_upgrade;
         }
 
+        ## RTP Web Admin
+        location ^~ /rtp-web-admin/ {
+            alias /var/www/rtp-web-admin/html;
+            index index.html;
+
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host $host;
+            proxy_cache_bypass $http_upgrade;
+        }
+
         ## Janus REST API
         location /janus {
             proxy_pass http://127.0.0.1:8088/janus;
