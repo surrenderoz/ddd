@@ -365,7 +365,7 @@ class JanusPluginStreaming(JanusBasePlugin):
             'data': data,
         }
         if _id:
-            body['_id'] = _id
+            body['id'] = _id
             body['name'] = _id
             body['description'] = _id
         if name:
