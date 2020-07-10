@@ -9,12 +9,88 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css" type="text/css"/>
     <link rel="stylesheet" href="main.css" type="text/css"/>
 </head>
 <body>
     <div class="container">
-        <span>RTP Web Admin</span>
+        <div class="row">
+            <div class="col">
+
+                <!-- Login form -->
+                <div class="container" id="login-form-container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <h1>RTP Web Admin</h1>
+                            <p>Введите полученные от сервера реквизиты доступа для входа в сессию администрирования:</p>
+                            <form id="login-form">
+                                <div class="form-group">
+                                    <label for="input-session-id">Идентификатор сессии</label>
+                                    <input type="text" class="form-control" id="input-session-id"
+                                           placeholder="Введите session-id">
+                                </div>
+                                <div class="form-group">
+                                    <label for="input-pin">ПИН-код</label>
+                                    <input type="password" class="form-control" id="input-pin" maxlength="4"
+                                           placeholder="Введите четырёхзначный PIN-код сессии">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Войти</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main area with player and text chat -->
+                <div class="container d-none" id="main-window">
+                    <div class="row justify-content-center" id="streaming-container">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="card-title">Видео
+                                        <span class="badge badge-info d-none" id="streamingStatus"></span>
+                                        <span class="badge badge-primary d-none" id="streamingCurrentResolution"></span>
+                                        <span class="badge badge-info d-none" id="streamingCurrentBitrate"></span>
+                                    </span>
+                                </div>
+                                <div class="card-body" id="stream">
+                                    <video class="rounded centered d-none" id="streamingRemoteVideo" width=320 height=240 autoplay playsinline></video>
+                                    <video class="rounded centered d-none" id="streamingWaitingVideo" width=320 height=240></video>
+                                    <div class="d-none" id="streamingNoRemoteVideo">
+                                        <i class="fa fa-video-camera fa-5 no-video-icon"></i>
+                                        <span class="no-video-text">Видео недоступно</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <span class="card-title">Public Chatroom</span>
+                                </div>
+                                <div class="card-body relative" style="overflow-x: auto;" id="chatroom">
+                                </div>
+                                <div class="card-footer">
+                                    <div class="input-group margin-bottom-sm">
+                                        <span class="input-group-addon"><i
+                                                class="fa fa-cloud-upload fa-fw"></i></span>
+                                        <input class="form-control" type="text"
+                                               placeholder="Write a chatroom message" autocomplete="off"
+                                               id="datasend" onkeypress="return checkEnter(this, event);"
+                                               disabled></input>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <!-- bootstrap with deps -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -24,6 +100,8 @@
     <script type="text/javascript" src="janus.js" ></script>
     <!-- other -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
-    <script type="text/javascript" src="rtp-web-admin.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+
+    <script type="text/javascript" src="remote-admin.js"></script>
 </body>
 </html>
