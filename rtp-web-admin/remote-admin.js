@@ -108,7 +108,7 @@ $(document).ready(function () {
                             streaming = pluginHandle;
                             Janus.log("streaming: plugin attached! (" + streaming.getPlugin() + ", id=" + streaming.getId() + ")");
                             if (!spinner){
-                                spinner = new VideoSpinner($('stream'));
+                                spinner = new VideoSpinner($('#stream').get(0));
                             }
                             if (!videoStats) {
                                 videoStats = new VideoStats(
@@ -235,15 +235,20 @@ function VideoSpinner(container){
 
     this.start = function(){
         if (this.spinner) {
-            spinner.spin();
+            this.spinner.spin();
+            console.info('VideoSpinner: started');
         } else {
-            spinner = new Spinner({top: 100}).spin(this.container);
+            this.spinner = new Spinner({top: 100}).spin(this.container);
+            console.info('VideoSpinner: created & started');
         }
     }
     this.stop = function () {
         if (this.spinner) {
             this.spinner.stop();
             this.spinner = null;
+            console.log('VideoSpinner: stopped');
+        } else {
+            console.warn('VideoSpinner: already stopped');
         }
     }
 }
