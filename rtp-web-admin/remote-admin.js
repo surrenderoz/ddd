@@ -11,11 +11,6 @@ function getJanusServers() {
             "https://" + window.location.hostname + ":8089/janus"
         );
     }
-    // todo: test
-    servers = [
-        'wss://headwind-janus-test.kuzmichev.dev:8989',
-        // 'https://headwind-janus-test.kuzmichev.dev:8089/janus'
-    ];
     return servers;
 }
 
