@@ -103,12 +103,12 @@ async def run(janus: "Janus"):
     gstreaming = GStreaming(janus.url_hostname, videoport=stream_videoport, audioport=stream_audioport)
 
     # print credentials
-    print(f'============= CONNECT CREDENTIALS =============')
+    print(f'============= CONNECT CREDENTIALS ===================')
     print(f'===')
     print(f'=== SESSION ID: {room_id}')  # one of equal IDs
     print(f'=== PIN: {pin}')
     print(f'===')
-    print(f'===============================================')
+    print(f'=====================================================')
 
     try:
         while True:
