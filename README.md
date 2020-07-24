@@ -9,8 +9,8 @@
 - Janus. Медиасервер
 - nginx. Веб-сервер общего назначения
 - certbot. Агент дял управления SSL-сертификатами, выпускаемыми LetsEncrypt
-- Источник RTP (RTP source). Сервис, имитирующий удалённое устройство. При запуске создаёт защищённые пин-кодом точку вещания видео и текстовую комнату (DataChannel), реагирует на присоединившихся пользователей, исполняет их команды
-- Админка RTP (RTP Web Admin). Веб-страница для удалённого управления устройством. Доступно по адресу: `https://your.domain.ru/rtp-web-admin/`
+- Источник RTP (RTP source). Сервис, имитирующий удалённое устройство. При запуске создаёт защищённые PIN-кодом точку вещания видео и текстовую комнату (DataChannel), реагирует на присоединившихся пользователей, исполняет их команды
+- Админка RTP (RTP Web Admin). Веб-страница для удалённого управления устройством. Доступна по адресу: `https://your.domain.ru/rtp-web-admin/`
 - Демки Janus. Стандартные демки, можно использовать для проверки работы Janus. Доступны по адресу: `https://your.domain.ru/janus-gateway-test/`
 
 ## Инструкция по развёртыванию
@@ -19,9 +19,14 @@
 
 - Архитектура `x84_64` / `amd64`
 - ОС Ubuntu, варианты:
-	- Ubuntu Bionic 18.04 LTS
-	- Ubuntu Xenial 16.04 LTS
+	- Ubuntu Bionic `18.04 LTS` 
+	- Ubuntu Xenial `16.04 LTS` (полностью протестировано на DigitalOcean с версией `16.04.6 LTS`)
 - Командная оболочка `bash`
+
+Полностью протестирована и подтверждена работоспособность на хостинге DigitalOcean со следующими версиями Ubuntu:
+
+- Ubuntu Bionic 18.04.3 LTS x64
+- Ubuntu Xenial 16.04.6 LTS x64
 
 ### Подготовка системы
 
@@ -29,14 +34,14 @@
 
 `sudo apt-get update`
 
-`sudo apt-get install git`
+`sudo apt-get install -y git`
 
 
 #### Установка docker
 Взято из https://docs.docker.com/engine/install/ubuntu/
 
 ```
-sudo apt-get install \
+sudo apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -55,13 +60,15 @@ sudo add-apt-repository \
 
 `sudo apt-get update`
 
-`sudo apt-get install docker-ce docker-ce-cli containerd.io`
+`sudo apt-get install -y docker-ce docker-ce-cli containerd.io`
 
 
 #### Установка docker-compose
 Взято из https://docs.docker.com/compose/install/
 
 `sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+
+`sudo chmod +x /usr/local/bin/docker-compose`
 
 Опционально, можно установить autocompletion для docker-compose (взято отсюда https://docs.docker.com/compose/completion/):
 
@@ -79,9 +86,21 @@ sudo add-apt-repository \
 
 Прежде всего, обратитесь к владельцу репозитория для получения доступа на скачивание системы.
 
-Далее, склонируем систему:
+Предварительно создайте SSH-ключ для доступа к репозиторию:
+
+`ssh-keygen -t rsa -b 4096 -C "your@email.ru"`
+
+Вместо `your@email.ru` укажите свою почту, на все остальные запросы команды достаточно просто нажимать `Enter`
+
+После успешной генерации ключа, выведите его на экран, скопируйте и отправьте владельцу репозитория, чтобы он добавил ваш ключ для доступа к скачиванию системы:
+
+`cat ~/.ssh/id_rsa.pub`
+
+После того, как вам будет предоставлен доступ, можно склонировать систему:
 
 `git pull git@gitlab.com:headwind/remote-control.git`
+
+Если при клонировании спросит про сертификат, необходимо ввести `yes`
 
 #### Запуск системы
 
@@ -179,3 +198,5 @@ sudo add-apt-repository \
 - `start`: запуск трансляции видео. Если видео было остановлено, его трансляция и последующее воспроизведение на странице начнётся снова
 - `stop`: остановка трансляции видео. Если в данный момент идёт трансляция видео, она прекратится
 - `quit`: выход, источник RTP уничтожит текущую сессию и завершит работу. 
+
+Остальные команды источник RTP будет просто дублировать в чат в пометкой "nothing to do".
