@@ -28,45 +28,50 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    // objects
-    {
-        var janus = null;
-        var textroom = null;
-        var streaming = null;
-        var ui = new UI();
-    }
-
-    // ids
-    {
-        var opaqueId = Janus.randomString(12);
-        var streamingOpaqueId = "streaming-" + opaqueId;
-        var textroomOpaqueId = "textroom-" + opaqueId;
-    }
-
-    var videoStats;
-    var remoteVideo;
-    var spinner;
-
-    var remoteChat;
-
     // Make sure the browser supports WebRTC
     if (!Janus.isWebrtcSupported()) {
+        console.error('No WebRTC support - no cartoons');
         bootbox.alert("Нет поддержки WebRTC, попробуйте свежую версию Google Chrome");
         return;
     }
-    // Initialize the library (all console debuggers enabled)
+
+    // objects
+    var janus = null;
+    var textroom = null;
+    var streaming = null;
+
+    var ui = new UI();
+
+    var remoteVideo;
+    var remoteChat;
+
+    var videoStats;
+    var spinner;
+
+    // opaque ids
+    var opaqueId = Janus.randomString(12);
+    var streamingOpaqueId = "streaming-" + opaqueId;
+    var textroomOpaqueId = "textroom-" + opaqueId;
+
+    var janusServers = getJanusServers();
+    var janusDebugLevel = ['warn', 'error'];
+
+    console.debug('actual Janus servers:', janusServers);
+    console.debug('janus debug level:', janusDebugLevel);
+
+    // Initialize Janus Library
     Janus.init({
-        debug: "all", callback: function () {
+        debug: janusDebugLevel, callback: function () {
             janus = new Janus({
-                server: getJanusServers(),
+                server: janusServers,
                 success: function () {
                     // Attach to TextRoom plugin
                     janus.attach({
                         plugin: "janus.plugin.textroom",
-                        opaqueId: opaqueId,
+                        opaqueId: textroomOpaqueId,
                         success: function (pluginHandle) {
                             textroom = pluginHandle;
-                            Janus.log("textroom: plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
+                            console.info("textroom: plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
 
                             if (!remoteChat) {
                                 remoteChat = new RemoteChat(
@@ -83,28 +88,30 @@ $(document).ready(function () {
                         },
 
                         error: function (error) {
-                            Janus.error("textroom: error attaching plugin: ", error);
+                            console.error("textroom: error attaching plugin: ", error);
                             bootbox.alert("Ошибка подключения к сессии: " + error);
                         },
 
                         onmessage: function (msg, jsep) {
-                            Janus.log("textroom: got a message ", msg);
+                            console.debug("textroom: got a message ", msg);
 
                             if (msg.error) {
+                                console.error('textroom: onmessage got error', msg)
                                 bootbox.alert(msg.error);
                             }
                             if (jsep) {
+                                console.debug("textroom: answering for SDP", jsep);
                                 // Answer
                                 textroom.createAnswer({
                                     jsep: jsep,
                                     media: {audio: false, video: false, data: true},
                                     success: function (jsep) {
-                                        Janus.debug("textroom: success answering with SDP", jsep);
+                                        console.debug("textroom: success answering with SDP", jsep);
                                         var body = {"request": "ack"};
                                         textroom.send({"message": body, "jsep": jsep});
                                     },
                                     error: function (error) {
-                                        Janus.error("WebRTC error:", error);
+                                        console.error("textroom: WebRTC error", error);
                                         bootbox.alert("Ошибка WebRTC: " + JSON.stringify(error));
                                     }
                                 });
@@ -112,7 +119,7 @@ $(document).ready(function () {
                         },
 
                         ondataopen: function (data) {
-                            console.info("textroom: DataChannel is available", data);
+                            console.debug("textroom: DataChannel is available", data);
                         },
 
                         ondata: function (rawData) {
@@ -124,7 +131,7 @@ $(document).ready(function () {
                             var transactionId = data.transaction;
                             var transactionResult = remoteChat.processTransactionAnswer(transactionId, data);
                             if (transactionResult) {
-                                console.info('textroom: done transaction with id', transactionId, 'and result', transactionResult);
+                                console.debug('textroom: done transaction with id', transactionId, 'and result', transactionResult);
                                 return;
                             }
 
@@ -161,7 +168,7 @@ $(document).ready(function () {
                         opaqueId: streamingOpaqueId,
                         success: function (pluginHandle) {
                             streaming = pluginHandle;
-                            Janus.log("streaming: plugin attached! (" + streaming.getPlugin() + ", id=" + streaming.getId() + ")");
+                            console.info("streaming: plugin attached! (" + streaming.getPlugin() + ", id=" + streaming.getId() + ")");
                             if (!spinner) {
                                 spinner = new VideoSpinner($('#stream').get(0));
                             }
@@ -178,7 +185,6 @@ $(document).ready(function () {
                                     ui,
                                     streaming,
                                     $('#streamingRemoteVideo'),
-                                    $('#streamingWaitingVideo'),
                                     $('#streamingNoRemoteVideo'),
                                     videoStats,
                                     spinner,
@@ -187,12 +193,12 @@ $(document).ready(function () {
                         },
 
                         error: function (error) {
-                            Janus.error("streaming: error attaching plugin: ", error);
+                            console.error("streaming: error attaching plugin: ", error);
                             bootbox.alert("Ошибка подключения к сессии: " + error);
                         },
 
                         onmessage: function (msg, jsep) {
-                            Janus.log("streaming: got a message", msg, jsep);
+                            console.debug("streaming: got a message", msg, jsep);
                             var result = msg.result;
                             // check result
                             if (result) {
@@ -202,8 +208,7 @@ $(document).ready(function () {
                                     } else if (result.status === 'started') {
                                         $('#streamingStatus').text("Started").removeClass('d-none');
                                     } else if (result.status === 'stopped') {
-                                        stopStreaming();
-                                        remoteVideo.cleanup();
+                                        remoteVideo.stopStreaming();
                                     }
                                 } else if (msg.streaming === 'event') {
                                     // todo: simulcast in place? Is VP9/SVC in place?
@@ -217,15 +222,14 @@ $(document).ready(function () {
                                     bootbox.alert('Не найдена сессия с идентификатором ' + remoteVideo.mountpointId);
                                 } else {
                                     bootbox.alert(msg["error"]);
-                                    stopStreaming();
-                                    remoteVideo.cleanup();
+                                    remoteVideo.stopStreaming();
                                 }
                                 return;
                             }
 
                             // handle JSEP
                             if (jsep) {
-                                Janus.log("streaming: handling remote SDP", jsep);
+                                console.debug("streaming: handling remote SDP", jsep);
                                 var stereo = (jsep.sdp.indexOf("stereo=1") !== -1);
                                 // got offer from the plugin, let's answer
                                 streaming.createAnswer({
@@ -237,33 +241,34 @@ $(document).ready(function () {
                                     customizeSdp: function (jsep) {
                                         if (stereo && jsep.sdp.indexOf("stereo=1") === -1) {
                                             jsep.sdp = jsep.sdp.replace("useinbandfec=1", "useinbandfec=1;stereo=1");
+                                            console.debug("streaming: SDP customized", jsep);
                                         }
                                     },
                                     success: function (jsep) {
-                                        Janus.log("streaming: success answering with SDP", jsep);
+                                        console.debug("streaming: success answering with SDP", jsep);
                                         var body = {"request": "start"};
                                         streaming.send({"message": body, "jsep": jsep});
                                     },
                                     error: function (error) {
-                                        Janus.error("WebRTC error:", error);
-                                        bootbox.alert("WebRTC error... " + JSON.stringify(error));
+                                        console.error("streaming: WebRTC error", error);
+                                        bootbox.alert("Ошибка WebRTC: " + JSON.stringify(error));
                                     }
                                 });
                             }
                         },
 
                         onremotestream: function (stream) {
-                            Janus.log("streaming: got remote stream", stream);
+                            console.info("streaming: got remote stream", stream);
                             remoteVideo.setStream(stream);
                         },
                         oncleanup: function () {
-                            Janus.log("streaming: got cleanup");
+                            console.info("streaming: got cleanup");
                             remoteVideo.cleanup();
                         },
                     });
                 },
                 error: function (error) {
-                    Janus.error(error);
+                    console.error(error);
                     bootbox.alert('Возникла ошибка: ' + error, function () {
                         window.location.reload();
                     });
@@ -278,18 +283,6 @@ $(document).ready(function () {
     });
 });
 
-function stopJanus() {
-    // todo: нужна кнопка остановки всего?
-    janus.destroy();
-}
-
-function stopStreaming(streaming) {
-    if (streaming) {
-        streaming.send({"message": {"request": "stop"}});
-        streaming.hangup();
-    }
-}
-
 function VideoSpinner(container) {
     this.container = container;
     this.spinner = null;
@@ -297,19 +290,19 @@ function VideoSpinner(container) {
     this.start = function () {
         if (this.spinner) {
             this.spinner.spin();
-            console.info('VideoSpinner: started');
+            console.debug('VideoSpinner: started');
         } else {
             this.spinner = new Spinner({top: 100}).spin(this.container);
-            console.info('VideoSpinner: created & started');
+            console.debug('VideoSpinner: created & started');
         }
     }
     this.stop = function () {
         if (this.spinner) {
             this.spinner.stop();
             this.spinner = null;
-            console.log('VideoSpinner: stopped');
+            console.debug('VideoSpinner: stopped');
         } else {
-            console.warn('VideoSpinner: already stopped');
+            console.debug('VideoSpinner: already stopped');
         }
     }
 }
@@ -331,6 +324,7 @@ function VideoStats(streaming, bitrateElem, resolutionElem, remoteVideoElem) {
 
             this.bitrateElem.addClass('d-none');
             this.resolutionElem.addClass('d-none');
+            console.debug('VideoStats: stopped');
         }
     }
 
@@ -367,29 +361,33 @@ function VideoStats(streaming, bitrateElem, resolutionElem, remoteVideoElem) {
                     self.resolutionElem.text(width + 'x' + height).removeClass('d-none');
             }, 1000);
         })(this);
+
+        console.debug('VideoStats: started');
     }
 }
 
-function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteVideoElem, videoStats, spinner) {
+function RemoteVideo(ui, streaming, remoteVideoElem, noRemoteVideoElem, videoStats, spinner) {
     this.ui = ui;
     this.streaming = streaming;
     this.remoteVideoElem = remoteVideoElem;
-    this.waitingVideoElem = waitingVideoElem;
     this.noRemoteVideoElem = noRemoteVideoElem;
     this.videoStats = videoStats;
     this.spinner = spinner;
     this.stream = null;
     this.mountpointId = null;
 
+    var obj = this;  // lol hack
+
     this.noRemoteVideo = function () {
-        // No remote video
         this.remoteVideoElem.addClass('d-none');
         this.noRemoteVideoElem.removeClass('d-none');
+        console.debug('video: no remote');
     }
 
     this.hasRemoteVideo = function () {
         this.noRemoteVideoElem.addClass('d-none');
         this.remoteVideoElem.removeClass('d-none');
+        console.debug('video: has remote');
     }
 
     this.setStream = function (stream) {
@@ -411,22 +409,21 @@ function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteV
 
     this.startStreamMountpoint = function (mountpointId, pin) {
         this.mountpointId = mountpointId;
-        console.info("streaming: starting mountpoint id " + mountpointId);
+        console.info("streaming: starting mountpoint id " + mountpointId + ' with pin ' + pin);
 
         var body = {"request": "watch", "id": mountpointId, "pin": pin};
         this.streaming.send({"message": body});
         this.noRemoteVideo();
-        this.waitingVideoElem.removeClass('d-none');
         this.spinner.start();
     }
 
-    var obj = this;  // lol hack
     this.remoteVideoElem.on("playing", function (e) {
-        obj.waitingVideoElem.addClass('d-none');
+        console.debug('video: playing event', e);
+        obj.spinner.stop();
+
         if (obj.remoteVideoElem.videoWidth) {
             obj.remoteVideoElem.removeClass('d-none');
         }
-        obj.spinner.stop();
 
         var videoTracks = obj.stream.getVideoTracks();
         if (videoTracks && videoTracks.length > 0) {
@@ -436,8 +433,15 @@ function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteV
         }
     });
 
+    this.stopStreaming = function () {
+        console.info('video: stopping streaming');
+        this.streaming.send({"message": {"request": "stop"}});
+        this.streaming.hangup();
+        this.cleanup();
+    }
+
     this.cleanup = function () {
-        this.waitingVideoElem.addClass('d-none');
+        console.info('video: cleanup ..');
         this.remoteVideoElem.addClass('d-none');
         this.noRemoteVideoElem.addClass('d-none');
         this.videoStats.stop();
@@ -466,12 +470,16 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
     /* Transactions */
     this.startTransaction = function (data, callback, errorCallback) {
         var transactionId = Janus.randomString(12);
+        console.debug('chat: transaction start', transactionId, data, callback, errorCallback);
+
         data.transaction = transactionId;
         this.transactions[transactionId] = callback;
+        console.debug('now we have', Object.keys(this.transactions).length, 'active transactions');
 
         this.textroom.data({
             text: JSON.stringify(data),
             error: function (reason) {
+                console.error('chat: transaction send data error', reason);
                 bootbox.alert(reason);
                 if (errorCallback) {
                     errorCallback(reason);
@@ -484,29 +492,24 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
 
     this.processTransactionAnswer = function (transactionId, data) {
         if (this.transactions[transactionId]) {
+            console.debug('chat: transaction answered', transactionId, data)
             var ret = this.transactions[transactionId](data);
             delete this.transactions[transactionId];
+            console.debug('chat: now we have', Object.keys(this.transactions).length, 'active transactions');
             return [undefined, null].indexOf(ret) < 0 ? ret : true;
         }
         return false;
     };
 
+
     /* Chat controls */
-    this.disableSendButton = function () {
-        this.sendButton.attr('disabled', true);
-    };
-
-    this.enableSendButton = function () {
-        this.sendButton.removeAttr('disabled');
-    };
-
     this.disableAllChatControls = function () {
-        this.disableSendButton();
+        this.sendButton.attr('disabled', true);
         this.messageInput.attr('disabled', true);
     };
 
     this.enableAllChatControls = function () {
-        this.enableSendButton();
+        this.sendButton.removeAttr('disabled');
         this.messageInput.removeAttr('disabled').focus();
         this.chatElem.css('height', '250px');
     };
@@ -515,18 +518,18 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
         this.chatElem.scrollTop(this.chatElem.prop('scrollHeight'));
     };
 
+
     /* HTML Event Handlers */
     this.chatForm.on("submit", function (e) {
         var data = obj.messageInput.val();
-        console.info('textroom: chat form send data', data);
         obj.sendData(data)
         e.preventDefault();
     });
 
-    /* TextRoom functions*/
 
+    /* TextRoom functions*/
     this.setUp = function(){
-        console.info('textroom: set up ..');
+        console.info('chat: set up ..');
 
         var body = {"request": "setup"};
         this.textroom.send({"message": body});
@@ -548,6 +551,7 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
             username: this.userId,
             display: this.userName,
         };
+        console.debug('chat: join room & register user', registerData);
 
         this.startTransaction(registerData, function (response) {
             if (response.textroom === "error") {
@@ -561,6 +565,8 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
                 return;
             }
 
+            console.debug('chat: we are in the room!');
+
 			if(response.participants && response.participants.length > 0) {
                 for (var i in response.participants) {
                     var p = response.participants[i];
@@ -570,10 +576,12 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
                     }
                 }
             }
+			console.debug('chat: room has participants', obj.participants);
 
             obj.ui.textroomReady(true);
             obj.enableAllChatControls();
         }, function (reason) {
+            console.error('chat: joining room error', reason);
             obj.disableAllChatControls();
             bootbox.alert(reason);
         });
@@ -589,23 +597,27 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
             room: this.sessionId,
             text: data,
         };
+        console.debug('textroom: sending chat message', messageData);
 
         this.disableAllChatControls();
         this.startTransaction(messageData, function (response) {
             obj.messageInput.val('');
             obj.enableAllChatControls();
         }, function (reason) {
+            console.error('textroom: sending chat message error', reason);
             bootbox.alert(reason);
         });
     };
 
     this.cleanup = function () {
+        console.debug('chat: cleanup');
         this.disableAllChatControls();
     };
 
 
     /* Messages Processing */
     this.processIncomingMessage = function (message, from, date, isWhisper){
+        console.debug('chat: incoming message', message, from, date, isWhisper);
         message = this._formatMessageForHTML(message);
         var dateString = getDateString(date);
         if (isWhisper) {
@@ -618,12 +630,14 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
     };
 
     this.processAnnouncement = function (message, date){
+        console.debug('chat: announcement', message, date);
         message = this._formatMessageForHTML(message);
         var dateString = getDateString(date);
         this.appendMessageToChat(`<i>${message}</i>`, 'purple', dateString);
     };
 
     this.processJoin = function (userId, userName){
+        console.debug('chat: user joined', userId, userName);
         this.participants[userId] = userName ? userName : userId;
 
         if (userId !== this.userId) {
@@ -633,11 +647,13 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
     };
 
     this.processLeave = function (userId){
+        console.debug('chat: user leaved', userId);
         this.appendMessageToChat(`<i>${this.participants[userId]} вышел</i>`, 'green');
         delete this.participants[userId];
     };
 
     this.processKick = function (userId){
+        console.debug('chat: user kicked', userId);
         this.appendMessageToChat(`<i>${this.participants[userId]} был выкинут из комнаты</i>`, 'red');
         delete this.participants[userId];
 
@@ -652,11 +668,11 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
         if (roomId !== this.sessionId) {
             return;
         }
+        console.debug('chat: current room has been destroyed', roomId);
         this.appendMessageToChat(`<b>Сессия ${this.sessionId} была завершена</b>`);
         bootbox.alert("Сессия была завершена", function () {
             window.location.reload();
         });
-        console.warn("textroom: current room " + roomId + " has been destroyed");
     }
 
 
@@ -680,17 +696,20 @@ function UI(){
 
     this.streamingReady = function (ready){
         this.isStreamingReady = ready;
+        console.debug('UI: streaming ready', ready);
         this.checkIsAllReady();
     };
 
     this.textroomReady = function (ready){
         this.isTextroomReady = ready;
+        console.debug('UI: textroom ready', ready);
         this.checkIsAllReady();
     };
 
     this.checkIsAllReady = function(){
         if (this.isStreamingReady && this.isTextroomReady){
             if (!this.alreadyShowed) {
+                console.debug('UI: all ready, switching login form to main window');
                 $('#login-form-container').addClass('d-none');
                 $('#main-window').removeClass('d-none');
                 this.alreadyShowed = true;
