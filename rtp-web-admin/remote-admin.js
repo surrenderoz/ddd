@@ -22,7 +22,7 @@ function getJanusServers() {
 $(document).ready(function () {
     $('#login-form').on('submit', function (e) {
         var sessionId = $('#input-session-id').val();
-        var pin = $('#pin').val();
+        var pin = $('#input-pin').val();
         remoteVideo.startStreamMountpoint(sessionId, pin);
         remoteChat.startRoom(sessionId, pin);
         e.preventDefault();
@@ -413,10 +413,7 @@ function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteV
         this.mountpointId = mountpointId;
         console.info("streaming: starting mountpoint id " + mountpointId);
 
-        var body = {"request": "watch", "id": mountpointId};
-        if (pin) {
-            body.pin = pin;
-        }
+        var body = {"request": "watch", "id": mountpointId, "pin": pin};
         this.streaming.send({"message": body});
         this.noRemoteVideo();
         this.waitingVideoElem.removeClass('d-none');
@@ -444,7 +441,7 @@ function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteV
         this.remoteVideoElem.addClass('d-none');
         this.noRemoteVideoElem.addClass('d-none');
         this.videoStats.stop();
-        $('#streaming-container').addClass('d-none');
+        // $('#streaming-container').addClass('d-none');
     }
 }
 
