@@ -24,6 +24,7 @@ $(document).ready(function () {
         var sessionId = $('#input-session-id').val();
         var pin = $('#pin').val();
         remoteVideo.startStreamMountpoint(sessionId, pin);
+        remoteChat.startRoom(sessionId, pin);
         $('#login-form-container').addClass('d-none');
         $('#main-window').removeClass('d-none');
         return false;
@@ -36,7 +37,7 @@ $(document).ready(function () {
         var streaming = null;
     }
 
-    //ids
+    // ids
     {
         var opaqueId = Janus.randomString(12);
         var streamingOpaqueId = "streaming-" + opaqueId;
@@ -46,6 +47,8 @@ $(document).ready(function () {
     var videoStats;
     var remoteVideo;
     var spinner;
+
+    var remoteChat;
 
     // Make sure the browser supports WebRTC
     if (!Janus.isWebrtcSupported()) {
@@ -75,7 +78,7 @@ $(document).ready(function () {
                         },
 
                         onmessage: function (msg, jsep) {
-                            Janus.log ("textroom: got a message ", msg);
+                            Janus.log("textroom: got a message ", msg);
 
                             if (msg.error) {
                                 bootbox.alert(msg.error);
@@ -86,8 +89,7 @@ $(document).ready(function () {
                                     jsep: jsep,
                                     media: {audio: false, video: false, data: true},
                                     success: function (jsep) {
-                                        Janus.debug("Got SDP!");
-                                        Janus.debug(jsep);
+                                        Janus.debug("textroom: success answering with SDP", jsep);
                                         var body = {"request": "ack"};
                                         textroom.send({"message": body, "jsep": jsep});
                                     },
@@ -181,7 +183,6 @@ $(document).ready(function () {
                                         Janus.log("streaming: success answering with SDP", jsep);
                                         var body = {"request": "start"};
                                         streaming.send({"message": body, "jsep": jsep});
-                                        // todo: будет ли кнопка watch
                                     },
                                     error: function (error) {
                                         Janus.error("WebRTC error:", error);
