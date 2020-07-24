@@ -69,7 +69,11 @@ $(document).ready(function () {
                             textroom = pluginHandle;
                             Janus.log("textroom: plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
 
-                            // todo: тут создание объектов текструма
+                            if (!remoteChat){
+                                remoteChat = new RemoteChat(
+                                    textroom,
+                                )
+                            }
                         },
 
                         error: function (error) {
@@ -100,6 +104,11 @@ $(document).ready(function () {
                                 });
                             }
                         },
+
+                        oncleanup: function () {
+                            Janus.log("textroom: got cleanup");
+                            remoteChat.cleanup();
+                        }
                     });
 
                     // Attach to Streaming plugin
@@ -382,5 +391,18 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
         this.noRemoteVideoElem.addClass('d-none');
         this.videoStats.stop();
         $('#streaming-container').addClass('d-none');
+    }
+}
+
+function RemoteChat(textroom){
+    this.textroom = textroom;
+
+    this.startRoom = function (sessionId, pin){
+        // todo
+    }
+
+    this.cleanup = function (){
+        // todo
+        $('#datasend').attr('disabled', true);
     }
 }
