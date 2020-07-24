@@ -3,6 +3,7 @@
 ## Инструкция по развёртыванию.
 
 Требуется чистый сервер:
+
 - Архитектура `x84_64` / `amd64`
 - ОС Ubuntu, варианты:
 	- Bionic 18.04 LTS
@@ -15,7 +16,7 @@
 
 `sudo apt-get update`
 
-`sudo apt-get install mc htop git`
+`sudo apt-get install git`
 
 
 #### Установка docker
