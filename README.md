@@ -19,12 +19,14 @@
 
 - Архитектура `x84_64` / `amd64`
 - ОС Ubuntu, варианты:
+    - Ubuntu Focal `20.04 LTS`
 	- Ubuntu Bionic `18.04 LTS` 
-	- Ubuntu Xenial `16.04 LTS` (полностью протестировано на DigitalOcean с версией `16.04.6 LTS`)
+	- Ubuntu Xenial `16.04 LTS`
 - Командная оболочка `bash`
 
 Полностью протестирована и подтверждена работоспособность на хостинге DigitalOcean со следующими версиями Ubuntu:
 
+- Ubuntu Focal 20.04 LTS x64
 - Ubuntu Bionic 18.04.3 LTS x64
 - Ubuntu Xenial 16.04.6 LTS x64
 
