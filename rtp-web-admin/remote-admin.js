@@ -20,14 +20,12 @@ function getJanusServers() {
 }
 
 $(document).ready(function () {
-    $('#login-form').on('submit', function() {
+    $('#login-form').on('submit', function (e) {
         var sessionId = $('#input-session-id').val();
         var pin = $('#pin').val();
         remoteVideo.startStreamMountpoint(sessionId, pin);
         remoteChat.startRoom(sessionId, pin);
-        $('#login-form-container').addClass('d-none');
-        $('#main-window').removeClass('d-none');
-        return false;
+        e.preventDefault();
     });
 
     // objects
@@ -35,6 +33,7 @@ $(document).ready(function () {
         var janus = null;
         var textroom = null;
         var streaming = null;
+        var ui = new UI();
     }
 
     // ids
@@ -69,11 +68,18 @@ $(document).ready(function () {
                             textroom = pluginHandle;
                             Janus.log("textroom: plugin attached! (" + textroom.getPlugin() + ", id=" + textroom.getId() + ")");
 
-                            if (!remoteChat){
+                            if (!remoteChat) {
                                 remoteChat = new RemoteChat(
+                                    ui,
                                     textroom,
+                                    $('#textroomChat'),
+                                    $('#chat-form'),
+                                    $('#textroomMessageInput'),
+                                    $('#textroomSendButton'),
                                 )
                             }
+
+                            remoteChat.setUp();
                         },
 
                         error: function (error) {
@@ -105,8 +111,46 @@ $(document).ready(function () {
                             }
                         },
 
+                        ondataopen: function (data) {
+                            console.info("textroom: DataChannel is available", data);
+                        },
+
+                        ondata: function (rawData) {
+                            console.debug("textroom: got data from DataChannel", rawData);
+
+                            var data = JSON.parse(rawData);
+
+                            // process transaction if we have response on it
+                            var transactionId = data.transaction;
+                            var transactionResult = remoteChat.processTransactionAnswer(transactionId, data);
+                            if (transactionResult) {
+                                console.info('textroom: done transaction with id', transactionId, 'and result', transactionResult);
+                                return;
+                            }
+
+                            var what = data.textroom;
+                            if (what === "message") {
+                                // Incoming Message
+                                remoteChat.processIncomingMessage(data.text, data.from, data.date, data.whisper);
+                            } else if (what === "announcement") {
+                                // Room Announcement
+                                remoteChat.processAnnouncement(data.text, data.date);
+                            } else if (what === "join") {
+                                // Somebody joined
+                                remoteChat.processJoin(data.username, data.display);
+                            } else if (what === "leave") {
+                                // Somebody left
+                                remoteChat.processLeave(data.username);
+                            } else if (what === "kicked") {
+                                // Somebody was kicked
+                                remoteChat.processKick(data.username);
+                            } else if (what === "destroyed") {
+                                remoteChat.processRoomDestroy(data.room);
+                            }
+                        },
+
                         oncleanup: function () {
-                            Janus.log("textroom: got cleanup");
+                            console.info("textroom: got cleanup");
                             remoteChat.cleanup();
                         }
                     });
@@ -118,7 +162,7 @@ $(document).ready(function () {
                         success: function (pluginHandle) {
                             streaming = pluginHandle;
                             Janus.log("streaming: plugin attached! (" + streaming.getPlugin() + ", id=" + streaming.getId() + ")");
-                            if (!spinner){
+                            if (!spinner) {
                                 spinner = new VideoSpinner($('#stream').get(0));
                             }
                             if (!videoStats) {
@@ -131,6 +175,7 @@ $(document).ready(function () {
                             }
                             if (!remoteVideo) {
                                 remoteVideo = new RemoteVideo(
+                                    ui,
                                     streaming,
                                     $('#streamingRemoteVideo'),
                                     $('#streamingWaitingVideo'),
@@ -163,12 +208,18 @@ $(document).ready(function () {
                                 } else if (msg.streaming === 'event') {
                                     // todo: simulcast in place? Is VP9/SVC in place?
                                 }
+                                ui.streamingReady(true);
                             }
                             // check error
                             else if (msg.error) {
-                                bootbox.alert(msg["error"]);
-                                stopStreaming();
-                                remoteVideo.cleanup();
+                                ui.streamingReady(false);
+                                if (msg.error_code === 455){
+                                    bootbox.alert('Не найдена сессия с идентификатором ' + remoteVideo.mountpointId);
+                                } else {
+                                    bootbox.alert(msg["error"]);
+                                    stopStreaming();
+                                    remoteVideo.cleanup();
+                                }
                                 return;
                             }
 
@@ -205,7 +256,7 @@ $(document).ready(function () {
                             Janus.log("streaming: got remote stream", stream);
                             remoteVideo.setStream(stream);
                         },
-                        oncleanup: function(){
+                        oncleanup: function () {
                             Janus.log("streaming: got cleanup");
                             remoteVideo.cleanup();
                         },
@@ -233,17 +284,17 @@ function stopJanus() {
 }
 
 function stopStreaming(streaming) {
-    if(streaming) {
+    if (streaming) {
         streaming.send({"message": {"request": "stop"}});
         streaming.hangup();
     }
 }
 
-function VideoSpinner(container){
+function VideoSpinner(container) {
     this.container = container;
     this.spinner = null;
 
-    this.start = function(){
+    this.start = function () {
         if (this.spinner) {
             this.spinner.spin();
             console.info('VideoSpinner: started');
@@ -270,11 +321,11 @@ function VideoStats(streaming, bitrateElem, resolutionElem, remoteVideoElem) {
     this.remoteVideoElem = remoteVideoElem;
     this.interval = null;
 
-    this.isWorking = function(){
+    this.isWorking = function () {
         return this.interval;
     }
 
-    this.stop = function(){
+    this.stop = function () {
         if (this.isWorking()) {
             clearInterval(this.interval);
 
@@ -283,7 +334,7 @@ function VideoStats(streaming, bitrateElem, resolutionElem, remoteVideoElem) {
         }
     }
 
-    this._showCurrentResolution = function(){
+    this._showCurrentResolution = function () {
         this.resolutionElem.text(
             this.remoteVideoElem.get(0).width + 'x' + this.remoteVideoElem.get(0).height).removeClass('d-none');
     }
@@ -319,7 +370,8 @@ function VideoStats(streaming, bitrateElem, resolutionElem, remoteVideoElem) {
     }
 }
 
-function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideoElem, videoStats, spinner) {
+function RemoteVideo(ui, streaming, remoteVideoElem, waitingVideoElem, noRemoteVideoElem, videoStats, spinner) {
+    this.ui = ui;
     this.streaming = streaming;
     this.remoteVideoElem = remoteVideoElem;
     this.waitingVideoElem = waitingVideoElem;
@@ -327,19 +379,20 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
     this.videoStats = videoStats;
     this.spinner = spinner;
     this.stream = null;
+    this.mountpointId = null;
 
-    this.noRemoteVideo = function(){
+    this.noRemoteVideo = function () {
         // No remote video
         this.remoteVideoElem.addClass('d-none');
         this.noRemoteVideoElem.removeClass('d-none');
     }
 
-    this.hasRemoteVideo = function(){
+    this.hasRemoteVideo = function () {
         this.noRemoteVideoElem.addClass('d-none');
         this.remoteVideoElem.removeClass('d-none');
     }
 
-    this.setStream = function(stream){
+    this.setStream = function (stream) {
         this.stream = stream;
 
         Janus.attachMediaStream(this.remoteVideoElem.get(0), stream);
@@ -347,7 +400,7 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
         var videoTracks = stream.getVideoTracks();
         if (videoTracks && videoTracks.length > 0) {
             this.hasRemoteVideo();
-            if (['chrome', 'firefox', 'safari'].indexOf(Janus.webRTCAdapter.browserDetails.browser) >= 0){
+            if (['chrome', 'firefox', 'safari'].indexOf(Janus.webRTCAdapter.browserDetails.browser) >= 0) {
                 this.videoStats.start();
             }
         } else {
@@ -357,7 +410,8 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
     }
 
     this.startStreamMountpoint = function (mountpointId, pin) {
-        Janus.log("streaming: starting mountpoint id " + mountpointId);
+        this.mountpointId = mountpointId;
+        console.info("streaming: starting mountpoint id " + mountpointId);
 
         var body = {"request": "watch", "id": mountpointId};
         if (pin) {
@@ -372,7 +426,7 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
     var obj = this;  // lol hack
     this.remoteVideoElem.on("playing", function (e) {
         obj.waitingVideoElem.addClass('d-none');
-        if (obj.remoteVideoElem.videoWidth){
+        if (obj.remoteVideoElem.videoWidth) {
             obj.remoteVideoElem.removeClass('d-none');
         }
         obj.spinner.stop();
@@ -385,7 +439,7 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
         }
     });
 
-    this.cleanup = function(){
+    this.cleanup = function () {
         this.waitingVideoElem.addClass('d-none');
         this.remoteVideoElem.addClass('d-none');
         this.noRemoteVideoElem.addClass('d-none');
@@ -394,15 +448,268 @@ function RemoteVideo(streaming, remoteVideoElem, waitingVideoElem, noRemoteVideo
     }
 }
 
-function RemoteChat(textroom){
+function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) {
+    this.ui = ui;
     this.textroom = textroom;
+    this.chatElem = chatElem;
+    this.chatForm = chatForm;
+    this.messageInput = messageInput;
+    this.sendButton = sendButton;
 
-    this.startRoom = function (sessionId, pin){
-        // todo
+    this.transactions = {};
+    this.participants = {};
+
+    this.sessionId = '';
+    this.pin = '';
+    this.userId = Janus.randomString(12);
+    this.userName = Janus.randomString(6);
+
+    var obj = this;  // lol hack
+
+    /* Transactions */
+    this.startTransaction = function (data, callback, errorCallback) {
+        var transactionId = Janus.randomString(12);
+        data.transaction = transactionId;
+        this.transactions[transactionId] = callback;
+
+        this.textroom.data({
+            text: JSON.stringify(data),
+            error: function (reason) {
+                bootbox.alert(reason);
+                if (errorCallback) {
+                    errorCallback(reason);
+                }
+            }
+        });
+
+        return transactionId;
+    };
+
+    this.processTransactionAnswer = function (transactionId, data) {
+        if (this.transactions[transactionId]) {
+            var ret = this.transactions[transactionId](data);
+            delete this.transactions[transactionId];
+            return [undefined, null].indexOf(ret) < 0 ? ret : true;
+        }
+        return false;
+    };
+
+    /* Chat controls */
+    this.disableSendButton = function () {
+        this.sendButton.attr('disabled', true);
+    };
+
+    this.enableSendButton = function () {
+        this.sendButton.removeAttr('disabled');
+    };
+
+    this.disableAllChatControls = function () {
+        this.disableSendButton();
+        this.messageInput.attr('disabled', true);
+    };
+
+    this.enableAllChatControls = function () {
+        this.enableSendButton();
+        this.messageInput.removeAttr('disabled').focus();
+        this.chatElem.css('height', '250px');
+    };
+
+    this.chatScrollDown = function () {
+        this.chatElem.scrollTop(this.chatElem.prop('scrollHeight'));
+    };
+
+    /* HTML Event Handlers */
+    this.chatForm.on("submit", function (e) {
+        var data = obj.messageInput.val();
+        console.info('textroom: chat form send data', data);
+        obj.sendData(data)
+        e.preventDefault();
+    });
+
+    /* TextRoom functions*/
+
+    this.setUp = function(){
+        console.info('textroom: set up ..');
+
+        var body = {"request": "setup"};
+        this.textroom.send({"message": body});
+    };
+
+    this.startRoom = function (sessionId, pin) {
+        this.sessionId = sessionId;
+        this.pin = pin;
+
+        this.registerUserAndJoinRoom();
+    };
+
+    this.registerUserAndJoinRoom = function () {
+        this.disableAllChatControls();
+        var registerData = {
+            textroom: "join",
+            room: this.sessionId,
+            pin: this.pin,
+            username: this.userId,
+            display: this.userName,
+        };
+
+        this.startTransaction(registerData, function (response) {
+            if (response.textroom === "error") {
+                obj.ui.textroomReady(false);
+
+                if (response.error_code === 417) {
+                    bootbox.alert("Не найдена сессия с идентификатором " + obj.sessionId);
+                } else {
+                    bootbox.alert(response.error);
+                }
+                return;
+            }
+
+			if(response.participants && response.participants.length > 0) {
+                for (var i in response.participants) {
+                    var p = response.participants[i];
+                    obj.participants[p.username] = p.display ? p.display : p.username;
+                    if (p.username !== obj.userId) {
+                        obj.appendMessageToChat(`<i>${obj.participants[p.username]} уже здесь</i>`);
+                    }
+                }
+            }
+
+            obj.ui.textroomReady(true);
+            obj.enableAllChatControls();
+        }, function (reason) {
+            obj.disableAllChatControls();
+            bootbox.alert(reason);
+        });
+    };
+
+    this.sendData = function (data) {
+        if (!data) {
+            return;
+        }
+
+        var messageData = {
+            textroom: "message",
+            room: this.sessionId,
+            text: data,
+        };
+
+        this.disableAllChatControls();
+        this.startTransaction(messageData, function (response) {
+            obj.messageInput.val('');
+            obj.enableAllChatControls();
+        }, function (reason) {
+            bootbox.alert(reason);
+        });
+    };
+
+    this.cleanup = function () {
+        this.disableAllChatControls();
+    };
+
+
+    /* Messages Processing */
+    this.processIncomingMessage = function (message, from, date, isWhisper){
+        message = this._formatMessageForHTML(message);
+        var dateString = getDateString(date);
+        if (isWhisper) {
+            // Private message
+            this.appendMessageToChat(`<b>[скрытое сообщение от ${from}]:</b> ${message}</p>`, 'gray', dateString);
+        } else {
+            // Public message
+            this.appendMessageToChat(`<b>${from}:</b> ${message}</p>`, 'black', dateString);
+        }
+    };
+
+    this.processAnnouncement = function (message, date){
+        message = this._formatMessageForHTML(message);
+        var dateString = getDateString(date);
+        this.appendMessageToChat(`<i>${message}</i>`, 'purple', dateString);
+    };
+
+    this.processJoin = function (userId, userName){
+        this.participants[userId] = userName ? userName : userId;
+
+        if (userId !== this.userId) {
+            // todo: process somebody
+        }
+        this.appendMessageToChat(`<i>${this.participants[userId]} вошёл</i>`, 'green');
+    };
+
+    this.processLeave = function (userId){
+        this.appendMessageToChat(`<i>${this.participants[userId]} вышел</i>`, 'green');
+        delete this.participants[userId];
+    };
+
+    this.processKick = function (userId){
+        this.appendMessageToChat(`<i>${this.participants[userId]} был выкинут из комнаты</i>`, 'red');
+        delete this.participants[userId];
+
+        if (userId === this.userId) {
+            bootbox.alert("Вас выкинули из сессии", function () {
+                window.location.reload();
+            });
+        }
+    };
+
+    this.processRoomDestroy = function (roomId){
+        if (roomId !== this.sessionId) {
+            return;
+        }
+        this.appendMessageToChat(`<b>Сессия ${this.sessionId} была завершена</b>`);
+        bootbox.alert("Сессия была завершена", function () {
+            window.location.reload();
+        });
+        console.warn("textroom: current room " + roomId + " has been destroyed");
     }
 
-    this.cleanup = function (){
-        // todo
-        $('#datasend').attr('disabled', true);
+
+    this.appendMessageToChat = function (message, color, dateString){
+        dateString = dateString ? dateString : getDateString();
+        this.chatElem.append(`<p style="color: ${color};">[${dateString}] ${message}</p>`);
+        this.chatScrollDown();
     }
+
+    this._formatMessageForHTML = function (message){
+        message = message.replace(new RegExp('<', 'g'), '&lt');
+        message = message.replace(new RegExp('>', 'g'), '&gt');
+        return message
+    }
+}
+
+function UI(){
+    this.isStreamingReady = false;
+    this.isTextroomReady = false;
+    this.alreadyShowed = false;
+
+    this.streamingReady = function (ready){
+        this.isStreamingReady = ready;
+        this.checkIsAllReady();
+    };
+
+    this.textroomReady = function (ready){
+        this.isTextroomReady = ready;
+        this.checkIsAllReady();
+    };
+
+    this.checkIsAllReady = function(){
+        if (this.isStreamingReady && this.isTextroomReady){
+            if (!this.alreadyShowed) {
+                $('#login-form-container').addClass('d-none');
+                $('#main-window').removeClass('d-none');
+                this.alreadyShowed = true;
+            }
+        }
+    };
+}
+
+function getDateString(jsonDate) {
+    var when;
+    if (jsonDate) {
+        when = new Date(Date.parse(jsonDate));
+    } else {
+        when = new Date();
+    }
+    return ("0" + when.getUTCHours()).slice(-2) + ":" +
+        ("0" + when.getUTCMinutes()).slice(-2) + ":" +
+        ("0" + when.getUTCSeconds()).slice(-2);
 }
