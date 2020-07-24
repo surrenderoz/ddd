@@ -105,8 +105,7 @@ async def run(janus: "Janus"):
     # print credentials
     print(f'============= CONNECT CREDENTIALS =============')
     print(f'===')
-    print(f'=== ROOM ID: {room_id}')
-    print(f'=== STREAM ID: {stream_id}')
+    print(f'=== SESSION ID: {room_id}')  # one of equal IDs
     print(f'=== PIN: {pin}')
     print(f'===')
     print(f'===============================================')
