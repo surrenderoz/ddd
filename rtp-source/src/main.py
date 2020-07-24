@@ -71,10 +71,10 @@ async def run(janus: "Janus"):
 
     # prepare ids and credentials
     entrypoints_uuid = random_uuid()
-    room_id = 'rtp-remote-admin'  # todo: = entrypoints_uuid
+    room_id = entrypoints_uuid
     stream_id = entrypoints_uuid
 
-    pin = ''  # TODO: random_string(length=4, letters=False)
+    pin = random_string(length=4, letters=False)
 
     username = random_string(6, digits=False)
     display_name = 'rtp-source-' + username
@@ -151,7 +151,7 @@ async def run(janus: "Janus"):
                         break
                     else:
                         await textroom.send_to_room(
-                            room_id, text=f'{sender}, you said \"{text}\".')
+                            room_id, text=f'{sender}, you said \"{text}\", nothing to do.')
     finally:
         gstreaming.stop_streaming()
         await streaming.destroy(_id=stream_id)
