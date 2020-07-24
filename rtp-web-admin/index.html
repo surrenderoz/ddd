@@ -16,12 +16,18 @@
     <div class="container">
         <div class="row">
             <div class="col">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <h1>RTP Web Admin</h1>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Login form -->
                 <div class="container" id="login-form-container">
                     <div class="row justify-content-center">
                         <div class="col-md-6">
-                            <h1>RTP Web Admin</h1>
                             <p>Введите полученные от сервера реквизиты доступа для входа в сессию администрирования:</p>
                             <form id="login-form">
                                 <div class="form-group">
@@ -68,19 +74,20 @@
 
                             <div class="card">
                                 <div class="card-header">
-                                    <span class="card-title">Public Chatroom</span>
+                                    <span class="card-title">Команды</span>
                                 </div>
-                                <div class="card-body relative" style="overflow-x: auto;" id="chatroom">
+                                <div class="card-body relative" style="overflow-x: auto;" id="textroomChat">
                                 </div>
                                 <div class="card-footer">
-                                    <div class="input-group margin-bottom-sm">
-                                        <span class="input-group-addon"><i
-                                                class="fa fa-cloud-upload fa-fw"></i></span>
-                                        <input class="form-control" type="text"
-                                               placeholder="Write a chatroom message" autocomplete="off"
-                                               id="datasend" onkeypress="return checkEnter(this, event);"
-                                               disabled></input>
-                                    </div>
+                                    <form id="chat-form">
+                                        <div class="input-group margin-bottom-sm">
+                                            <input class="form-control" type="text"
+                                                   placeholder="Сообщение" autocomplete="off"
+                                                   id="textroomMessageInput" disabled/>
+                                            <button type="submit" class="btn btn-primary ml-1"
+                                                    id="textroomSendButton" disabled>Отправить</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
 
