@@ -162,6 +162,8 @@ if [[ ${NEED_TO_OBTAIN_CERT} != "0" ]]; then
 
   echo "### Reloading nginx ..."
   docker-compose exec nginx nginx -s reload
+  echo "### Restarting janus ..."
+  docker-compose restart janus
 fi
 
 # Start services
