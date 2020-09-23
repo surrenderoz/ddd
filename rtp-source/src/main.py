@@ -70,15 +70,15 @@ async def run(janus: "Janus"):
     pcs.add(pc)
 
     # prepare ids and credentials
-    entrypoints_uuid = random_uuid()
+    # todo: entrypoints_uuid = random_uuid()
+    entrypoints_uuid = 'test_uuid'
     room_id = entrypoints_uuid
     stream_id = entrypoints_uuid
 
     # todo: pin = random_string(length=4, letters=False)
     pin = '1111'
 
-    # todo: username = random_string(6, digits=False)
-    username = 'username'
+    username = random_string(6, digits=False)
     display_name = 'rtp-source-' + username
 
     # Janus session setup
