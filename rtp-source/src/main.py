@@ -101,7 +101,7 @@ async def run(janus: "Janus"):
     stream = await streaming.create(
         _id=stream_id, is_private=False, pin=pin,
         videortpmap='H264/90000',
-        videofmtp='profile-level-id=42E01F;packetization-mode=1',
+        videofmtp='profile-level-id=58E01F;packetization-mode=1',
     )
     stream_id = stream['stream']['id']
     stream_audioport = stream['stream']['audio_port']
