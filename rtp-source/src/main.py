@@ -74,9 +74,11 @@ async def run(janus: "Janus"):
     room_id = entrypoints_uuid
     stream_id = entrypoints_uuid
 
-    pin = random_string(length=4, letters=False)
+    # todo: pin = random_string(length=4, letters=False)
+    pin = '1111'
 
-    username = random_string(6, digits=False)
+    # todo: username = random_string(6, digits=False)
+    username = 'username'
     display_name = 'rtp-source-' + username
 
     # Janus session setup
