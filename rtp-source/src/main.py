@@ -96,7 +96,11 @@ async def run(janus: "Janus"):
 
     # Janus streaming mountpoint setup
     streaming = await session.attach_streaming()
-    stream = await streaming.create(_id=stream_id, is_private=False, pin=pin)
+    stream = await streaming.create(
+        _id=stream_id, is_private=False, pin=pin,
+        videortpmap='H264/90000',
+        videofmtp='profile-level-id=42E01F;packetization-mode=1',
+    )
     stream_id = stream['stream']['id']
     stream_audioport = stream['stream']['audio_port']
     stream_videoport = stream['stream']['video_port']
@@ -105,7 +109,7 @@ async def run(janus: "Janus"):
     # print credentials
     print(f'============= CONNECT CREDENTIALS ===================')
     print(f'===')
-    print(f'=== SESSION ID: {room_id}')  # one of equal IDs
+    print(f'=== SESSION ID: {entrypoints_uuid}')  # one of equal IDs
     print(f'=== PIN: {pin}')
     print(f'===')
     print(f'=====================================================')
