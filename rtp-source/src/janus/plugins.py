@@ -349,8 +349,8 @@ class JanusPluginStreaming(JanusBasePlugin):
     async def create(
             self, _type: str = 'rtp', _id: str = '', name: str = '', description: str = '',
             secret: str = '', pin: str = '', is_private: bool = True,
-            audio: bool = True, audioport: int = 0, audiopt: int = 111, audiortpmap: str = "opus/48000/2",
-            video: bool = True, videoport: int = 0, videopt: int = 100, videortpmap: str = "VP8/90000",
+            audio: bool = True, audioport: int = 0, audiopt: int = 111, audiortpmap: str = "opus/48000/2", audiofmtp: str = '',
+            video: bool = True, videoport: int = 0, videopt: int = 100, videortpmap: str = "VP8/90000", videofmtp: str = '',
             videobufferkf: bool = False,  # experimental feature
             data: bool = False,
     ):
@@ -381,12 +381,14 @@ class JanusPluginStreaming(JanusBasePlugin):
                 'audioport': audioport,
                 'audiopt': audiopt,
                 'audiortpmap': audiortpmap,
+                'audiofmtp': audiofmtp,
             })
         if video:
             body.update({
                 'videoport': videoport,
                 'videopt': videopt,
                 'videortpmap': videortpmap,
+                'videofmtp': videofmtp,
                 'videobufferkf': videobufferkf,
             })
 
