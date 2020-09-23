@@ -457,8 +457,8 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
 
     this.sessionId = '';
     this.pin = '';
-    this.userId = Janus.randomString(12);
-    this.userName = Janus.randomString(6);
+    this.userId = '';
+    this.userName = '';
 
     var obj = this;  // lol hack
 
@@ -533,6 +533,9 @@ function RemoteChat(ui, textroom, chatElem, chatForm, messageInput, sendButton) 
     this.startRoom = function (sessionId, pin) {
         this.sessionId = sessionId;
         this.pin = pin;
+
+        this.userId = `admin:${sessionId}`;
+        this.userName = `admin:${sessionId}`;
 
         this.registerUserAndJoinRoom();
     };
