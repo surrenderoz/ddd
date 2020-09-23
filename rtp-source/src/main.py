@@ -71,7 +71,7 @@ async def run(janus: "Janus"):
 
     # prepare ids and credentials
     # todo: entrypoints_uuid = random_uuid()
-    entrypoints_uuid = 'test_uuid'
+    entrypoints_uuid = 'testuuid'
     room_id = entrypoints_uuid
     stream_id = entrypoints_uuid
 
