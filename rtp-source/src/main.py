@@ -78,8 +78,10 @@ async def run(janus: "Janus"):
     # todo: pin = random_string(length=4, letters=False)
     pin = '1111'
 
-    username = random_string(6, digits=False)
-    display_name = 'rtp-source-' + username
+    # todo: username = random_string(6, digits=False)
+    # todo: display_name = 'rtp-source-' + username
+    username = f'device:{room_id}'
+    display_name = username
 
     # Janus session setup
     session = janus.create_session()
