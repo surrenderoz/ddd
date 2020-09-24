@@ -344,17 +344,20 @@ function getStreamInfo() {
 	$('#info').addClass('hide').hide();
 	if(selectedStream === undefined || selectedStream === null)
 		return;
-	// Send a request for more info on the mountpoint we subscribed to
-	var body = { "request": "info", "id": selectedStream };
-	if (selectedStream === "RTPtest"){
-		body.pin = "viewpwd";
-	}
-	streaming.send({"message": body, success: function(result) {
-		if(result && result.info && result.info.metadata) {
-			$('#metadata').html(result.info.metadata);
-			$('#info').removeClass('hide').show();
+	bootbox.prompt('PIN?', function(pin){
+		// Send a request for more info on the mountpoint we subscribed to
+		var body = { "request": "info", "id": selectedStream };
+		if (pin) {
+			body.pin = pin;
 		}
-	}});
+		streaming.send({"message": body, success: function(result) {
+				if(result && result.info && result.info.metadata) {
+					$('#metadata').html(result.info.metadata);
+					$('#info').removeClass('hide').show();
+				}
+			}});
+
+	});
 }
 
 function startStream() {
@@ -366,21 +369,24 @@ function startStream() {
 	$('#streamset').attr('disabled', true);
 	$('#streamslist').attr('disabled', true);
 	$('#watch').attr('disabled', true).unbind('click');
-	var body = { "request": "watch", "id": selectedStream };
-	if (selectedStream === "RTPtest"){
-		body.pin = "viewpwd";
-	}
-	streaming.send({"message": body});
-	// No remote video yet
-	$('#stream').append('<video class="rounded centered" id="waitingvideo" width=320 height=240 />');
-	if(spinner == null) {
-		var target = document.getElementById('stream');
-		spinner = new Spinner({top:100}).spin(target);
-	} else {
-		spinner.spin();
-	}
-	// Get some more info for the mountpoint to display, if any
-	getStreamInfo();
+
+	bootbox.prompt('PIN?', function(pin){
+		var body = { "request": "watch", "id": selectedStream };
+		if(pin){
+			body.pin = pin;
+		}
+		streaming.send({"message": body});
+		// No remote video yet
+		$('#stream').append('<video class="rounded centered" id="waitingvideo" width=320 height=240 />');
+		if(spinner == null) {
+			var target = document.getElementById('stream');
+			spinner = new Spinner({top:100}).spin(target);
+		} else {
+			spinner.spin();
+		}
+		// Get some more info for the mountpoint to display, if any
+		getStreamInfo();
+	});
 }
 
 function stopStream() {
