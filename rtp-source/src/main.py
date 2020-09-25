@@ -102,7 +102,7 @@ async def run(janus: "Janus"):
     streaming = await session.attach_streaming()
     stream = await streaming.create(
         _id=stream_id, is_private=False, pin=pin,
-        # todo: for test videortpmap='H264/90000',
+        videortpmap='H264/90000',
     )
     stream_id = stream['stream']['id']
     stream_audioport = stream['stream']['audio_port']
