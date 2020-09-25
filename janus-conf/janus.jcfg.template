@@ -121,7 +121,7 @@ general: {
 		# The following is ONLY useful when debugging RTP/RTCP packets,
 		# e.g., to look at unencrypted live traffic with a browser. By
 		# default it is obviously disabled, as WebRTC mandates encryption.
-	#no_webrtc_encryption = true
+	no_webrtc_encryption = true
 
 		# Janus provides ways via its API to specify custom paths to save
 		# files to (e.g., recordings, pcap captures and the like). In order
