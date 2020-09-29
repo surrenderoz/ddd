@@ -19,7 +19,7 @@ FROM python:3.6-buster
 WORKDIR /usr/src/app
 
 RUN apt-get update && \
-    apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-tools && \
+    apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-tools && \
     apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
 COPY requirements.txt ./
