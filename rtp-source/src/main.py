@@ -26,8 +26,8 @@ class GStreaming:
         "videotestsrc", "pattern=ball", "!",
         "video/x-raw,width=320,height=240,framerate=15/1", "!",
         "videoscale", "!", "videorate", "!", "videoconvert", "!", "timeoverlay", "!",
-        "vp8enc", "error-resilient=1", "!",
-        "rtpvp8pay", "!", "udpsink", "host=HOST", "port=VIDEOPORT"
+        "x264enc", "tune=zerolatency", "speed-preset=fast", "!",
+        "rtph264pay", "!", "udpsink", "host=HOST", "port=VIDEOPORT"
     ]
 
     def __init__(self, host: str, videoport: int, audioport: int):
