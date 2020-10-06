@@ -24,7 +24,7 @@ class GStreaming:
         "opusenc", "bitrate=20000", "!",
         "rtpopuspay", "!", "udpsink", "host=HOST", "port=AUDIOPORT",
         "videotestsrc", "pattern=ball", "!",
-        "video/x-raw,width=320,height=240,framerate=15/1", "!",
+        "video/x-raw,width=320,height=600,framerate=15/1", "!",
         "videoscale", "!", "videorate", "!", "videoconvert", "!", "timeoverlay", "!",
         "x264enc", "tune=zerolatency", "speed-preset=fast", "!",
         "rtph264pay", "!", "udpsink", "host=HOST", "port=VIDEOPORT"
@@ -129,6 +129,7 @@ async def run(janus: "Janus"):
                         room_id, text=f'Hi {message["display"]}. I have "start", "stop" and "quit" commands, '
                                       f'other messages I will replay. '
                                       f'GStreaming will be started asap in honour of your joining to us! :)')
+                    await textroom.send_to_room(room_id, 'streamingVideoResolution,320,600')
                     if not gstreaming.is_running():
                         await gstreaming.start_streaming()
 
