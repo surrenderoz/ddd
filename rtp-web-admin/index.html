@@ -10,104 +10,151 @@
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css" type="text/css"/>
+    <link rel="stylesheet" href="toastr.min.css" type="text/css"/>
     <link rel="stylesheet" href="main.css" type="text/css"/>
+    <link rel="stylesheet" href="loader.css" type="text/css"/>
 </head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <h1>RTP Web Admin</h1>
-                        </div>
-                    </div>
-                </div>
+<body class="d-flex flex-column min-vh-100">
 
-                <!-- Login form -->
-                <div class="container" id="login-form-container">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <p>Введите полученные от сервера реквизиты доступа для входа в сессию администрирования:</p>
-                            <form id="login-form">
-                                <div class="form-group">
-                                    <label for="input-session-id">Идентификатор сессии</label>
-                                    <input type="text" class="form-control" id="input-session-id"
-                                           placeholder="Введите session-id">
-                                </div>
-                                <div class="form-group">
-                                    <label for="input-pin">ПИН-код</label>
-                                    <input type="password" class="form-control" id="input-pin" maxlength="4"
-                                           placeholder="Введите четырёхзначный PIN-код сессии">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Войти</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+<div id="pageLoader" class="loader loader-default is-active" data-text="Loading .."></div>
 
-                <!-- Main area with player and text chat -->
-                <div class="container d-none" id="main-window">
-                    <div class="row justify-content-center" id="streaming-container">
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <span class="card-title">Видео
-                                        <span class="badge badge-info d-none" id="streamingStatus"></span>
-                                        <span class="badge badge-primary d-none" id="streamingCurrentResolution"></span>
-                                        <span class="badge badge-info d-none" id="streamingCurrentBitrate"></span>
-                                    </span>
-                                </div>
-                                <div class="card-body" id="stream">
-                                    <video class="rounded centered d-none" id="streamingRemoteVideo" width=320 height=240 autoplay playsinline></video>
-                                    <div class="d-none" id="streamingNoRemoteVideo">
-                                        <i class="fa fa-video-camera fa-5 no-video-icon"></i>
-                                        <span class="no-video-text">Видео недоступно</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col-md-8">
+<!-- Login form -->
+<form id="login-form">
 
-                            <div class="card">
-                                <div class="card-header">
-                                    <span class="card-title">Команды</span>
-                                </div>
-                                <div class="card-body relative" style="overflow-x: auto;" id="textroomChat">
-                                </div>
-                                <div class="card-footer">
-                                    <form id="chat-form">
-                                        <div class="input-group margin-bottom-sm">
-                                            <input class="form-control" type="text"
-                                                   placeholder="Сообщение" autocomplete="off"
-                                                   id="textroomMessageInput" disabled/>
-                                            <button type="submit" class="btn btn-primary ml-1"
-                                                    id="textroomSendButton" disabled>Отправить</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+    <div class="container" id="login-form-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <h1>Android Remote Control</h1>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <p>Enter the credentials provided by the mobile device user:</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
 
-                        </div>
+                    <div class="form-group">
+                        <label for="input-session-id">Session ID</label>
+                        <input type="text" class="form-control" id="input-session-id" maxlength="8"
+                               placeholder="8 digits" value="testuuid">
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="input-pin">Password</label>
+                        <input type="text" class="form-control" id="input-pin" maxlength="4"
+                               placeholder="4 digits" value="1111">
+                    </div>
+
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-primary">Start</button>
             </div>
         </div>
     </div>
+</form>
 
-    <!-- bootstrap with deps -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<!-- Main area with video and device controls -->
+<div class="container border d-none" id="main-window">
+    <div class="row justify-content-center">
+        <div class="col-md-4 border text-center">
+            <h2 id="textDeviceName">...</h2>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4 border text-center">
+            <span class="link" id="btnNotifications">Expand Status Bar</span>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-auto border justify-content-center text-center p-0" id="windowStream">
+            <div id="videoLoader" class="loader loader-bouncing"></div>
+            <div id="deviceGestures"></div>
+            <video class="rounded centered" id="streamingRemoteVideo" autoplay playsinline
+                width="540" height="1064"></video>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-auto justify-content-center text-center">
+            <img src="icons8-back-96.png" class="m-1 active-icon" style="width: 64px;" alt="Back" id="btnBack" />
+            <img src="icons8-circle-96.png" class="m-1 active-icon" style="width: 64px;" alt="Home" id="btnHome" />
+            <img src="icons8-rounded-square-96.png" class="m-1 active-icon" style="width: 64px;" alt="Recents" id="btnRecents" />
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <span class="link" id="btnDisconnect">Disconnect</span>
+    </div>
+</div>
+
+
+<!-- Debug stuff, invisible by default (text chat, stream metrics, etc.) -->
+<div class="container debug-stuff d-none">
+    <div class="row">
+        <div class="col-md-auto">
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Commands
+                        <span class="badge badge-info" id="streamingStatus">Status</span>
+                        <span class="badge badge-primary" id="streamingCurrentResolution">Resolution</span>
+                        <span class="badge badge-info" id="streamingCurrentBitrate">Bitrate</span>
+                    </span>
+                </div>
+
+                <div class="card-body relative" style="overflow-x: auto;" id="textroomChat">
+                </div>
+
+                <div class="card-footer">
+                    <form id="chat-form">
+                        <div class="input-group margin-bottom-sm">
+                            <input class="form-control" type="text"
+                                   placeholder="Message" autocomplete="off"
+                                   id="textroomMessageInput" disabled/>
+                            <button type="submit" class="btn btn-primary ml-1"
+                                    id="textroomSendButton" disabled>Send
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <footer class="mt-auto">
+        <div class="container">
+            <div class="row justify-content-center p-1">
+                Android Remote Control&nbsp;&copy;&nbsp;<script type="text/javascript">document.write(new Date().getFullYear().toString())</script>&nbsp;<a href="https://h-mdm.com">Headwind MDM</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap4 with deps -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- WebRTC & Janus-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.4.0/adapter.min.js" ></script>
     <script type="text/javascript" src="janus.js" ></script>
-    <!-- other -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js"></script>
+    <!-- Other -->
+    <script type="text/javascript" src="https://unpkg.com/@popperjs/core@2.5.3/dist/umd/popper.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js" integrity="sha512-8vfyGnaOX2EeMypNMptU+MwwK206Jk1I/tMQV4NkhOz+W8glENoMhGyU6n/6VgQUhQcJH8NqQgHhMtZjJJBv3A==" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="toastr.min.js" ></script>
 
+    <!-- Application -->
+    <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="debug-utils.js"></script>
+    <script type="text/javascript" src="ui.js"></script>
+    <script type="text/javascript" src="settings.js"></script>
+    <script type="text/javascript" src="remote-chat.js"></script>
+    <script type="text/javascript" src="commands.js"></script>
+    <script type="text/javascript" src="remote-video.js"></script>
+    <script type="text/javascript" src="video-stats.js"></script>
+    <script type="text/javascript" src="gesture-builder.js"></script>
     <script type="text/javascript" src="remote-admin.js"></script>
 </body>
 </html>
