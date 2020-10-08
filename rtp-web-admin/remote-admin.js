@@ -159,6 +159,10 @@ $(document).ready(function () {
                             ui.showError(`'Streaming error: ${error}`, 'streaming_error');
                         },
 
+                        slowLink: function(uplink, lost){
+                            ui.showWarning(`Network problems: uplink=${uplink}, lost=${lost}`);
+                        },
+
                         onmessage: function (msg, jsep) {
                             console.debug("streaming: got a message", msg, jsep);
                             var result = msg.result;
