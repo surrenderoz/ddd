@@ -11,8 +11,14 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
 
     var obj = this;  // for event handlers
 
+    this.getStreamVideotracks = function(){
+        return this.stream ? this.stream.getVideoTracks() : [];
+    }
+
     this.noRemoteVideo = function () {
-        this.videoLoader.show();
+        if (window.debugUtils.isDebugEnabled()) {
+            this.videoLoader.show();
+        }
         console.debug('video: no remote');
     }
 
@@ -37,8 +43,7 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
             streamChanged = true;
         }
 
-        var videoTracks = stream.getVideoTracks();
-        if (videoTracks && videoTracks.length > 0) {
+        if (this.getStreamVideotracks().length > 0) {
             if (streamChanged) {
                 Janus.attachMediaStream(this.remoteVideoElem.get(0), this.stream);
             }
@@ -64,8 +69,7 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
     this.remoteVideoElem.on("playing", function (e) {
         console.debug('video: playing event', e);
 
-        var videoTracks = obj.stream.getVideoTracks();
-        if (videoTracks && videoTracks.length > 0) {
+        if (obj.getStreamVideotracks().length > 0) {
             obj.videoStats.start();
             remoteVideoElem = obj.remoteVideoElem.get(0);
             obj.setResolution(remoteVideoElem.videoWidth, remoteVideoElem.videoHeight);
