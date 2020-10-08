@@ -160,7 +160,7 @@ $(document).ready(function () {
                         },
 
                         slowLink: function(uplink, lost){
-                            ui.showWarning(`Network problems: uplink=${uplink}, lost=${lost}`);
+                            ui.showWarning(`Network problems (lost ${lost} packets)`);
                         },
 
                         onmessage: function (msg, jsep) {
