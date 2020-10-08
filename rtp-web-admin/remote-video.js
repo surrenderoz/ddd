@@ -8,6 +8,7 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
     this.mountpointId = null;
 
     this.videoResolution = null;
+    this.isVideoAlreadyPlayed = false;
 
     var obj = this;  // for event handlers
 
@@ -16,7 +17,7 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
     }
 
     this.noRemoteVideo = function () {
-        if (window.debugUtils.isDebugEnabled()) {
+        if (!this.isVideoAlreadyPlayed || window.debugUtils.isDebugEnabled()) {
             this.videoLoader.show();
         }
         console.debug('video: no remote');
@@ -73,48 +74,11 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
             obj.videoStats.start();
             remoteVideoElem = obj.remoteVideoElem.get(0);
             obj.setResolution(remoteVideoElem.videoWidth, remoteVideoElem.videoHeight);
+            obj.isVideoAlreadyPlayed = true;
         } else {
             obj.videoStats.stop();
         }
     });
-
-    this.remoteVideoElem.on("canplay", function (e) {
-        console.debug('VIDEO: canplay', e);
-    });
-
-    this.remoteVideoElem.on("waiting", function (e) {
-        console.debug('VIDEO: waiting', e);
-    });
-    this.remoteVideoElem.on("loadeddata", function (e) {
-        console.debug('VIDEO: loadeddata', e);
-    });
-    this.remoteVideoElem.on("loadedmetadata", function (e) {
-        console.debug('VIDEO: loadedmetadata', e);
-    });
-    this.remoteVideoElem.on("play", function (e) {
-        console.debug('VIDEO: play', e);
-    });
-    this.remoteVideoElem.on("pause", function (e) {
-        console.debug('VIDEO: pause', e);
-    });
-    this.remoteVideoElem.on("suspend", function (e) {
-        console.debug('VIDEO: suspend', e);
-    });
-    this.remoteVideoElem.on("abort", function (e) {
-        console.debug('VIDEO: abort', e);
-
-    });
-    this.remoteVideoElem.on("durationchanged", function (e) {
-        console.debug('VIDEO: durationchanged', e);
-    });
-
-    this.remoteVideoElem.on("error", function (e) {
-        console.debug('VIDEO: error', e);
-    });
-    this.remoteVideoElem.on("progress", function (e) {
-        // console.debug('VIDEO: progress', e);
-    });
-
 
     this.stopStreaming = function () {
         console.info('video: stopping streaming');
@@ -125,8 +89,6 @@ function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
 
     this.cleanup = function () {
         console.info('video: cleanup ..');
-        this.remoteVideoElem.addClass('d-none');
         this.videoStats.stop();
-        // $('#streaming-container').addClass('d-none');
     }
 }
