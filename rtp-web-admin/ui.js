@@ -24,9 +24,21 @@ function UI(){
         textroom_send_error
     */
 
-    /* Stage 1: initialization */
+    this.fillForm = function(){
+        if (document.location.search) {
+            var query = getQueryParams(document.location.search);
+            if (query.session) {
+                $('#input-session-id').val(query.session);
+            }
+            if (query.pin) {
+                $('#input-pin').val(query.pin);
+            }
+        }
+    }
 
+    /* Stage 1: initialization */
     this.initStart = function(){
+        this.fillForm();
         this.initIsTextroomReady = false;
         this.initIsStreamingReady = false;
         loader.show('Setup ..')
@@ -123,7 +135,7 @@ function UI(){
                             intervalData[3].modal('hide');
                             self.errorIntervals.delete(timeout_id);
                         }
-                    }, 1000);
+                    }, 1000);ge :
                     self.errorIntervals.set(currentTimestamp, [interval, -1, timeout, modalDialog, modalDialog.find('.modal-footer .btn-primary').html()]);
                 })(this, currentTimestamp);
             }
@@ -158,15 +170,20 @@ function UI(){
     }
 
     /* Misc */
-    this.setDeviceName = function(deviceName){
+    this.setDevice = function(deviceId, deviceName){
+        this.deviceId = deviceId;
         this.deviceName = deviceName;
         $('#textDeviceName').html(deviceName);
     }
 
     /* Disconnect */
+    this.sessionClosedRemotely = function(message){
+        message = message ? message : 'Session has been terminated by remote device';
+        this.showErrorModal(message, 'session_closed', function(){window.location.reload();}, 5);
+    }
 
     this.disconnect = function(message){
-        // todo: скрыть/прикрыть все контролы, показать сообщение, перезагрузить страницу по закрытии ошибки
-        bootbox.alert(`Disconnected: ${message}`);
+        message = message ? message : 'Disconnected';
+        this.showErrorModal(message, 'session_closed', function(){window.location.reload();}, 5);
     }
 }
