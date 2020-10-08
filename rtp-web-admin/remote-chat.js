@@ -7,7 +7,7 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
     this.sendButton = sendButton;
 
     this.transactions = {};
-    this.participants = [];
+    this.participants = new Map();
 
     this.sessionId = '';
     this.pin = '';
@@ -101,6 +101,18 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
         this.registerUserAndJoinRoom();
     };
 
+    this.leaveRoom = function(){
+        this.disableAllChatControls();
+        var leaveData = {
+            textroom: "leave",
+            room: this.sessionId,
+        }
+        console.debug('chat: leaving room', leaveData);
+        this.startTransaction(leaveData, function(response){
+            obj.textroom.hangup();
+        });
+    }
+
     this.registerUserAndJoinRoom = function () {
         this.disableAllChatControls();
         var registerData = {
@@ -117,7 +129,7 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
                 obj.ui.connAbort();
 
                 if (response.error_code === 417) {
-                    obj.ui.showError(`Session ${obj.sessionId} not found`, 'no_session')
+                    obj.ui.showError(`Session ${obj.sessionId} does not exist`, 'no_session')
                 } else {
                     obj.ui.showError(response.error, 'transaction_error');
                 }
@@ -125,33 +137,33 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
             }
             console.debug('chat: we are in the room!');
 
-            var deviceName = ''
+            var device = null;
             if(response.participants && response.participants.length > 0) {
                 for (var i in response.participants) {
                     var p = response.participants[i];
                     var pId = p.username;
                     var pName = p.display ? p.display : p.username;
-                    obj.participants.push([pId, pName]);
+                    obj.participants.set(pId, pName);
                     if (pName !== obj.userId) {
                         obj.appendMessageToChat(`<i>${pName} already in room</i>`);
                     }
 
                     if (pId.substring(0, 7).toLowerCase() === 'device:'){
-                        if(!deviceName) {
-                            deviceName = pId.substring(7);
+                        if(!device) {
+                            device = [pId, pName];
                         } else {
                             console.warn('chat: it seems the room has more than one device!');
                         }
                     }
                 }
-                console.debug('chat: room has participants', obj.participants);
+                console.debug('chat: room has participants', Array.from(obj.participants.entries()));
             }
             // если явно не найден девайс при обработке присутствующих, при этом имеем единственного - делаем девайсом его
-            if(!deviceName && obj.participants.length === 1){
-                deviceName = obj.participants[0][0];
+            if(!device && obj.participants.size === 1){
+                device = obj.participants.entries().next().value;
             }
-            if(deviceName){
-                obj.ui.setDeviceName(deviceName);
+            if(device){
+                obj.ui.setDevice(device[0], device[1]);
             } else {
                 console.error('chat: can not determine device from participants');
             }
@@ -222,27 +234,31 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
 
     this.processJoin = function (userId, userName){
         console.debug('chat: user joined', userId, userName);
-        this.participants[userId] = userName ? userName : userId;
+        this.participants.set(userId, userName ? userName : userId);
 
         if (userId !== this.userId) {
             // todo: process somebody?
         }
-        this.appendMessageToChat(`<i>${this.participants[userId]} joined</i>`, 'green');
+        this.appendMessageToChat(`<i>${this.participants.get(userId)} joined</i>`, 'green');
     };
 
     this.processLeave = function (userId){
         console.debug('chat: user leaved', userId);
-        this.appendMessageToChat(`<i>${this.participants[userId]} leaved</i>`, 'green');
-        delete this.participants[userId];
+        this.appendMessageToChat(`<i>${this.participants.get(userId)} leaved</i>`, 'green');
+        this.participants.delete(userId);
+
+        if(userId === this.ui.deviceId){
+            this.ui.sessionClosedRemotely('Device left the session');
+        }
     };
 
     this.processKick = function (userId){
         console.debug('chat: user kicked', userId);
-        this.appendMessageToChat(`<i>${this.participants[userId]} kicked</i>`, 'red');
-        delete this.participants[userId];
+        this.appendMessageToChat(`<i>${this.participants.get(userId)} kicked</i>`, 'red');
+        this.participants.delete(userId);
 
         if (userId === this.userId) {
-            this.ui.showErrorModal('You has been kicked', 'kicked', function(){window.location.reload();}, 5);
+            this.ui.sessionClosedRemotely('You has been kicked from session');
         }
     };
 
@@ -252,9 +268,9 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
         }
         console.debug('chat: current room has been destroyed', roomId);
         this.appendMessageToChat(`<b>Session ${this.sessionId} has been closed</b>`);
-        this.ui.showErrorModal('Session has been closed', 'session_closed', function(){window.location.reload();}, 5);
-    }
 
+        this.ui.sessionClosedRemotely('Session has been closed');
+    }
 
     this.appendMessageToChat = function (message, color, dateString){
         dateString = dateString ? dateString : getDateString();
