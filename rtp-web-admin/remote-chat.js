@@ -7,7 +7,7 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
     this.sendButton = sendButton;
 
     this.transactions = {};
-    this.participants = {};
+    this.participants = [];
 
     this.sessionId = '';
     this.pin = '';
@@ -125,24 +125,44 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
             }
             console.debug('chat: we are in the room!');
 
-            // todo: здесь также получить название устройства и передать его в UI
+            var deviceName = ''
             if(response.participants && response.participants.length > 0) {
                 for (var i in response.participants) {
                     var p = response.participants[i];
-                    obj.participants[p.username] = p.display ? p.display : p.username;
-                    if (p.username !== obj.userId) {
-                        obj.appendMessageToChat(`<i>${obj.participants[p.username]} already in room</i>`);
+                    var pId = p.username;
+                    var pName = p.display ? p.display : p.username;
+                    obj.participants.push([pId, pName]);
+                    if (pName !== obj.userId) {
+                        obj.appendMessageToChat(`<i>${pName} already in room</i>`);
+                    }
+
+                    if (pId.substring(0, 7).toLowerCase() === 'device:'){
+                        if(!deviceName) {
+                            deviceName = pId.substring(7);
+                        } else {
+                            console.warn('chat: it seems the room has more than one device!');
+                        }
                     }
                 }
+                console.debug('chat: room has participants', obj.participants);
             }
-            console.debug('chat: room has participants', obj.participants);
+            // если явно не найден девайс при обработке присутствующих, при этом имеем единственного - делаем девайсом его
+            if(!deviceName && obj.participants.length === 1){
+                deviceName = obj.participants[0][0];
+            }
+            if(deviceName){
+                obj.ui.setDeviceName(deviceName);
+            } else {
+                console.error('chat: can not determine device from participants');
+            }
+
             obj.enableAllChatControls();
 
             obj.ui.connTextroomReady();
         }, function (reason) {
             obj.ui.connAbort();
-            console.error('chat: joining room error', reason);
             obj.disableAllChatControls();
+            console.error('chat: joining room error', reason);
             this.ui.showError(reason, 'join_error');
         });
     };
