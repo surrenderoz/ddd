@@ -1,4 +1,6 @@
 function UI(){
+    this.deviceName = null;
+
     this.initIsTextroomReady = false;
     this.initIsStreamingReady = false;
     this.connDialog = null;
@@ -6,6 +8,7 @@ function UI(){
     this.connIsStreamingReady = false;
 
     this.errors = new Map();
+    this.errorIntervals = new Map();
     /* Error aliases:
         no_session
         transaction_error (textroom only?)
@@ -22,7 +25,6 @@ function UI(){
     */
 
     /* Stage 1: initialization */
-    this.errorIntervals = new Map();
 
     this.initStart = function(){
         this.initIsTextroomReady = false;
@@ -153,6 +155,12 @@ function UI(){
     }
     this.showError = function(message, title, onclick, onhidden, timeout){
         this.showNotify('error', message, title, onclick, onhidden, timeout);
+    }
+
+    /* Misc */
+    this.setDeviceName = function(deviceName){
+        this.deviceName = deviceName;
+        $('#textDeviceName').html(deviceName);
     }
 
     /* Disconnect */
