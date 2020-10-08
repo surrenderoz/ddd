@@ -72,6 +72,10 @@ $(document).ready(function () {
                             bootbox.alert("Ошибка подключения к сессии: " + error);
                         },
 
+                        slowLink: function(uplink, lost){
+                            ui.showWarning(`Network problems`, 'Device management', null, null, 2000);
+                        },
+
                         onmessage: function (msg, jsep) {
                             console.debug("textroom: got a message ", msg);
 
@@ -160,7 +164,7 @@ $(document).ready(function () {
                         },
 
                         slowLink: function(uplink, lost){
-                            ui.showWarning(`Network problems (lost ${lost} packets)`);
+                            ui.showWarning(`Network problems`, 'Screen sharing', null, null, 2000);
                         },
 
                         onmessage: function (msg, jsep) {
@@ -184,6 +188,7 @@ $(document).ready(function () {
                             // check error
                             else if (msg.error) {
                                 console.error('streaming: onmessage error', msg.error);
+                                ui.connAbort();
 
                                 if (msg.error_code === 455){
                                     ui.showError(`Session ${remoteVideo.mountpointId} does not exist`, 'no_session');
@@ -238,7 +243,7 @@ $(document).ready(function () {
                     ui.showErrorModal(`Session error: ${error}`, 'janus_session_error', function(){window.location.reload();}, 5);
                 },
                 destroyed: function () {
-                    ui.showErrorModal('Session has been destroyed', 'janus_session_destroyed', function(){window.location.reload();}, 5);
+                    ui.sessionClosedRemotely('Session has been destroyed');
                 }
             });
         }
@@ -248,6 +253,7 @@ $(document).ready(function () {
     $('#login-form').on('submit', function (e) {
         var sessionId = $('#input-session-id').val();
         var pin = $('#input-pin').val();
+        ui.connStart();
         remoteVideo.startStreamMountpoint(sessionId, pin);
         remoteChat.startRoom(sessionId, pin);
         e.preventDefault();
@@ -279,5 +285,12 @@ $(document).ready(function () {
         if(remoteChat){
             remoteChat.sendData('notifications');
         }
+    });
+
+    // Disconnect button
+    $('#btnDisconnect').on('click', function(e){
+        remoteVideo.stopStreaming();
+        remoteChat.leaveRoom();
+        ui.disconnect();
     });
 });
