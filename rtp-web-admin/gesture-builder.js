@@ -18,8 +18,9 @@ function GestureBuilder(divGesture, remoteChat){
     this.gestureFinish = function (offsetX, offsetY){
         offsetX = offsetX > 0 ? offsetX : 0;
         offsetY = offsetY > 0 ? offsetY : 0;
-        console.debug('gesture: ends on ', [offsetX, offsetY]);
         if(this.swipeInProcess){
+            console.debug('gesture: ends on ', [offsetX, offsetY]);
+
             var swipeDuration = Date.now() - this.swipeStartMillis;
             var swipeEndPosition = [offsetX, offsetY];
             var swipeType = '', swipeDataToSend = '';
