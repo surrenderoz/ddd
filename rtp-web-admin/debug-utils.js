@@ -3,14 +3,20 @@ function DebugUtils(remoteChat){
     this.testSwipesInterval = null;
     this.remoteChat = remoteChat;
 
+    this.isDebugEnabled = function(){
+        return this.enabled;
+    }
+
     this.enable = function(){
         this.enabled = true;
         $('.debug-stuff').removeClass('d-none');
+        $('div').addClass('debug-border');
     }
 
     this.disable = function(){
         this.enabled = false;
         $('.debug-stuff').addClass('d-none');
+        $('div').removeClass('debug-border');
     }
 
     this.toggleTestSwipes = function(w, h, delay){
