@@ -4,29 +4,7 @@ function CheatCodes(){
     this.cheatTimeout = null;
     this.cheatTimeoutDelay = 500;
 
-    this.cheatHandlers = new Map();
-
     var obj = this;  // for event handlers
-
-    this.onCheat = function(cheat){
-        console.info(`CheatCodes: entered cheat "${cheat}"`);
-
-        if (this.cheatHandlers.has(cheat)){
-            this.cheatHandlers.get(cheat).forEach(function(handler, index){
-                console.debug(`CheatCodes: run handler #${index+1} for cheat "${cheat}"`);
-                handler.apply(window, [cheat]);
-            });
-        }
-    }
-
-    this.on = function(cheat, callback){
-        cheat = cheat.toLowerCase();
-        if (!this.cheatHandlers.has(cheat)){
-            this.cheatHandlers.set(cheat, [callback]);
-        } else {
-            this.cheatHandlers.get(cheat).push(callback);
-        }
-    }
 
     this.restartCheatInterval = function(){
         if(this.cheatTimeout){
@@ -39,7 +17,7 @@ function CheatCodes(){
                 var cheat = self.keys.join('');
                 self.keys = [];
                 if (cheat.length >= self.cheatMinLength){
-                    self.onCheat(cheat);
+                    ui.emit('CheatCodes.onCheatEntered', cheat);
                 }
                 self.cheatTimeout = null;
             }, delay);
