@@ -152,6 +152,10 @@ async def run(janus: "Janus"):
                             await textroom.send_to_room(room_id, text='Stopping GStreaming ..')
                         else:
                             await textroom.send_to_room(room_id, text='Nothing to stop.')
+                    # PING
+                    elif text.lower().startswith('ping'):
+                        parts = text.split(',')
+                        await textroom.send_to_room(room_id, text='pong,' + ''.join(parts[1:]))
                     # QUIT
                     elif text.lower() == 'quit':
                         await textroom.send_to_room(room_id, text=f'Bye {sender}!')
