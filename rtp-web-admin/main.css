@@ -2,6 +2,9 @@
 	border: 1px solid #dee2e6 !important;
 }
 
+input.form-control::placeholder{
+	color: #aaa;
+}
 
 .rounded {
 	border-radius: 5px;
