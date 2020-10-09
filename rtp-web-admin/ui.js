@@ -24,6 +24,38 @@ function UI(){
         textroom_send_error
     */
 
+    /* Events Management */
+    this.events = {}
+
+    this.on = function (name, listener, context){
+        if (!this.events[name]) {
+            this.events[name] = [];
+        }
+        this.events[name].push([listener, context]);
+    }
+
+    this.removeListener = function (name, listenerToRemove) {
+        if (!this.events[name]) {
+            console.error(`UI.Events: can't remove a listener. Event "${name}" doesn't exits.`);
+        }
+        const filterListeners = function(listener){
+            return listener !== listenerToRemove;
+        };
+        this.events[name] = this.events[name].filter(filterListeners);
+    }
+
+    this.emit = function (name, data){
+        if (!this.events[name]) {
+            console.error(`UI.Events: can't emit a listener. Event "${name}" doesn't exits.`);
+        }
+
+        this.events[name].forEach(function(callback, index){
+            console.debug(`UI.Events: run handler #${index+1} for event "${name}" with data`, data);
+            callback[0].apply(callback[1], [data]);
+        });
+    }
+
+
     this.fillForm = function(){
         if (document.location.search) {
             var query = getQueryParams(document.location.search);
@@ -100,7 +132,6 @@ function UI(){
         if (this.connIsStreamingReady && this.connIsTextroomReady) {
             console.debug('UI.Connection: ready. Switching from login form to main window');
             loader.hide();
-            // todo?
             $('#login-form-container').addClass('d-none');
             $('#main-window').removeClass('d-none');
         }
