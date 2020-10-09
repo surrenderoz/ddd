@@ -300,4 +300,9 @@ $(document).ready(function () {
         remoteChat.leaveRoom();
         ui.disconnect();
     });
+
+    // Close debug stuff
+    $('#debugClose').on('click', function(e){
+        window.debugUtils.disable();
+    });
 });
