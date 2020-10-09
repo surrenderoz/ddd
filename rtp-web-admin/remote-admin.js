@@ -37,10 +37,17 @@ $(document).ready(function () {
 
     var gestureBuilder = new GestureBuilder($('#deviceGestures'), remoteChat);
 
-    // debug stuff
+    // Cheat codes on page :)
+    window.cheatCodes = new CheatCodes();
+
+    // Debug stuff
     console.debug('actual Janus servers:', janusServers);
     console.debug('janus debug level:', janusDebugLevel);
     window['debugUtils'] = new DebugUtils(remoteChat);
+
+    cheatCodes.on('needtodebug', function(){
+        window.debugUtils.enable();
+    });
 
     // objects
     var janus = null;
