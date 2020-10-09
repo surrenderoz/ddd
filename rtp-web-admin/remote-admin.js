@@ -10,7 +10,6 @@ $(document).ready(function () {
     }
 
     var remoteChat = new RemoteChat(
-        ui,
         $('#textroomChat'),
         $('#chat-form'),
         $('#textroomMessageInput'),
@@ -26,16 +25,18 @@ $(document).ready(function () {
     var videoLoader = new Loader($("#videoLoader"));
 
     var remoteVideo = new RemoteVideo(
-        ui,
         $('#streamingRemoteVideo'),
         videoLoader,
         videoStats,
     );
 
-    var commands = new Commands(ui, remoteChat, remoteVideo);
+    var commands = new Commands(remoteChat, remoteVideo);
     remoteChat.setCommandsProcessor(commands);
 
     var gestureBuilder = new GestureBuilder($('#deviceGestures'), remoteChat);
+
+    // Device monitoring
+    var deviceMonitoring = new DeviceMonitoring(remoteChat);
 
     // Cheat codes on page :)
     window.cheatCodes = new CheatCodes();
@@ -45,8 +46,10 @@ $(document).ready(function () {
     console.debug('janus debug level:', janusDebugLevel);
     window['debugUtils'] = new DebugUtils(remoteChat);
 
-    cheatCodes.on('needtodebug', function(){
-        window.debugUtils.enable();
+    ui.on('CheatCodes.onCheatEntered', function(cheat){
+        if (cheat === 'needtodebug') {
+            window.debugUtils.enable();
+        }
     });
 
     // objects
@@ -296,10 +299,15 @@ $(document).ready(function () {
 
     // Disconnect button
     $('#btnDisconnect').on('click', function(e){
+        ui.emit('Session.Disconnect');
+    });
+
+    ui.on('Session.Disconnect', function(){
         remoteVideo.stopStreaming();
         remoteChat.leaveRoom();
         ui.disconnect();
     });
+
 
     // Close debug stuff
     $('#debugClose').on('click', function(e){
