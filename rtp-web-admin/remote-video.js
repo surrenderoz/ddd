@@ -1,5 +1,4 @@
-function RemoteVideo(ui, remoteVideoElem, videoLoader, videoStats) {
-    this.ui = ui;
+function RemoteVideo(remoteVideoElem, videoLoader, videoStats) {
     this.streaming = null;
     this.remoteVideoElem = remoteVideoElem;
     this.videoLoader = videoLoader;
