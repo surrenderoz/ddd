@@ -31,6 +31,7 @@ function CheatCodes(){
     this.restartCheatInterval = function(){
         if(this.cheatTimeout){
             window.clearTimeout(this.cheatTimeout);
+            this.cheatTimeout = null;
         }
 
         (function (self, delay) {
@@ -40,6 +41,7 @@ function CheatCodes(){
                 if (cheat.length >= self.cheatMinLength){
                     self.onCheat(cheat);
                 }
+                self.cheatTimeout = null;
             }, delay);
         })(this, this.cheatTimeoutDelay);
     }
