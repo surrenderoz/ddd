@@ -1,5 +1,4 @@
-function Commands(ui, remoteChat, remoteVideo){
-    this.ui = ui;
+function Commands(remoteChat, remoteVideo){
     this.removeVideo = remoteVideo;
     this.remoteChat = remoteChat;
     this.commands = new Map();
@@ -7,6 +6,9 @@ function Commands(ui, remoteChat, remoteVideo){
 
     this.commands.set('streamingVideoResolution', function(w, h){
         obj.removeVideo.setResolution(w, h);
+    });
+    this.commands.set('pong', function(timestamp){
+        ui.emit('DeviceMonitoring.onPong', timestamp);
     });
 
     this.process = function(message){
