@@ -1,5 +1,4 @@
-function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
-    this.ui = ui;
+function RemoteChat(chatElem, chatForm, messageInput, sendButton) {
     this.textroom = null;
     this.chatElem = chatElem;
     this.chatForm = chatForm;
@@ -126,12 +125,12 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
 
         this.startTransaction(registerData, function (response) {
             if (response.textroom === "error") {
-                obj.ui.connAbort();
+                ui.connAbort();
 
                 if (response.error_code === 417) {
-                    obj.ui.showError(`Session ${obj.sessionId} does not exist`, 'no_session')
+                    ui.showError(`Session ${obj.sessionId} does not exist`, 'no_session')
                 } else {
-                    obj.ui.showError(response.error, 'transaction_error');
+                    ui.showError(response.error, 'transaction_error');
                 }
                 return;
             }
@@ -163,19 +162,20 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
                 device = obj.participants.entries().next().value;
             }
             if(device){
-                obj.ui.setDevice(device[0], device[1]);
+                ui.setDevice(device[0], device[1]);
             } else {
                 console.error('chat: can not determine device from participants');
             }
 
             obj.enableAllChatControls();
+            ui.connTextroomReady();
 
-            obj.ui.connTextroomReady();
+            ui.emit('RemoteChat.onManagementStart');
         }, function (reason) {
-            obj.ui.connAbort();
+            ui.connAbort();
             obj.disableAllChatControls();
             console.error('chat: joining room error', reason);
-            this.ui.showError(reason, 'join_error');
+            ui.showError(reason, 'join_error');
         });
     };
 
@@ -197,13 +197,14 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
             obj.enableAllChatControls();
         }, function (reason) {
             console.error('textroom: sending chat message error', reason);
-            this.ui.showError(reason, 'textroom_send_error');
+            ui.showError(reason, 'textroom_send_error');
         });
     };
 
     this.cleanup = function () {
         console.debug('chat: cleanup');
         this.disableAllChatControls();
+        ui.emit('RemoteChat.onManagementStop');
     };
 
 
@@ -247,8 +248,8 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
         this.appendMessageToChat(`<i>${this.participants.get(userId)} leaved</i>`, 'green');
         this.participants.delete(userId);
 
-        if(userId === this.ui.deviceId){
-            this.ui.sessionClosedRemotely('Device left the session');
+        if(userId === ui.deviceId){
+            ui.sessionClosedRemotely('Device left the session');
         }
     };
 
@@ -258,7 +259,7 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
         this.participants.delete(userId);
 
         if (userId === this.userId) {
-            this.ui.sessionClosedRemotely('You has been kicked from session');
+            ui.sessionClosedRemotely('You has been kicked from session');
         }
     };
 
@@ -269,7 +270,7 @@ function RemoteChat(ui, chatElem, chatForm, messageInput, sendButton) {
         console.debug('chat: current room has been destroyed', roomId);
         this.appendMessageToChat(`<b>Session ${this.sessionId} has been closed</b>`);
 
-        this.ui.sessionClosedRemotely('Session has been closed');
+        ui.sessionClosedRemotely('Session has been closed');
     }
 
     this.appendMessageToChat = function (message, color, dateString){
