@@ -35,8 +35,8 @@ $(document).ready(function () {
 
     var gestureBuilder = new GestureBuilder($('#deviceGestures'), remoteChat);
 
-    // Device monitoring
-    var deviceMonitoring = new DeviceMonitoring(remoteChat);
+    // Session monitoring
+    var sessionMonitoring = new SessionMonitoring(remoteChat);
 
     // Cheat codes on page :)
     window.cheatCodes = new CheatCodes();

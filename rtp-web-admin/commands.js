@@ -8,7 +8,7 @@ function Commands(remoteChat, remoteVideo){
         obj.removeVideo.setResolution(w, h);
     });
     this.commands.set('pong', function(timestamp){
-        ui.emit('DeviceMonitoring.onPong', timestamp);
+        ui.emit('SessionMonitoring.onPong', timestamp);
     });
 
     this.process = function(message){
