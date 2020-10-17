@@ -13,22 +13,22 @@ function getJanusServers() {
     }
 
     // TODO: test
-    // servers = [];
-    // if (window.location.protocol === 'https:') {
-    //     servers.push(
-    //         "ws://janus-rtp-remoteadmin.kuzmichev.dev:8188",
-    //         "http://janus-rtp-remoteadmin.kuzmichev.dev:8088/janus",
-    //         //"ws://demo.h-mdm.com:8188",
-    //         //"http://demo.h-mdm.com:8088/janus",
-    //     );
-    // } else {
-    //     servers.push(
-    //         "wss://janus-rtp-remoteadmin.kuzmichev.dev:8989",
-    //         "https://janus-rtp-remoteadmin.kuzmichev.dev:8089/janus",
-    //         //"wss://demo.h-mdm.com:8989",
-    //         //"https://demo.h-mdm.com/janus"
-    //     );
-    // }
+    servers = [];
+    if (window.location.protocol === 'https:') {
+        servers.push(
+            "http://janus-rtp-remoteadmin.kuzmichev.dev:8088/janus",
+            "ws://janus-rtp-remoteadmin.kuzmichev.dev:8188",
+            //"ws://demo.h-mdm.com:8188",
+            //"http://demo.h-mdm.com:8088/janus",
+        );
+    } else {
+        servers.push(
+            "https://janus-rtp-remoteadmin.kuzmichev.dev:8089/janus",
+            "wss://janus-rtp-remoteadmin.kuzmichev.dev:8989",
+            //"wss://demo.h-mdm.com:8989",
+            //"https://demo.h-mdm.com/janus"
+        );
+    }
     // TODO: end test
     return servers;
 }
