@@ -97,9 +97,6 @@ done
 for filename in ./nginx-conf/*.template; do
   sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
 done
-for filename in ./rtp-source/*.template; do
-  sed "s/{{ DOMAIN }}/$LIVE_DOMAIN/" ${filename} > "${filename%.*}"
-done
 
 # Decide to obtain cert or not
 if [[ -d "$data_path/live/$LIVE_DOMAIN" ]]; then

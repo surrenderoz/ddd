@@ -53,17 +53,6 @@ services:
 #      - "10000-10200:10000-10200/udp"
     restart: unless-stopped
 
-  rtp-source:
-    build:
-      context: rtp-source
-      dockerfile: Dockerfile
-    depends_on:
-      - janus
-    network_mode: host
-    restart: "no"
-    env_file:
-      - rtp-source/.env
-
 volumes:
   # certs (FROM "certbot" FOR nginx FOR janus)
   certbot-etc:
