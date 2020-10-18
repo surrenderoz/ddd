@@ -7,9 +7,9 @@ events {
 
 http {
     server {
-        listen 80;
-        listen [::]:80;
-        server_name .{{ DOMAIN }};
+        listen {{ web_http_port}};
+        listen [::]:{{ web_http_port }};
+        server_name .{{ hostname }};
 
         # LetsEncrypt ACME Challenge
         location ~ /.well-known/acme-challenge {
@@ -24,13 +24,13 @@ http {
     }
 
     server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
+        listen {{ web_https_port }} ssl http2;
+        listen [::]:{{ web_https_port }} ssl http2;
 
-        server_name .{{ DOMAIN }};
+        server_name .{{ hostname }};
 
-        ssl_certificate /etc/letsencrypt/live/{{ DOMAIN }}/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/{{ DOMAIN }}/privkey.pem;
+        ssl_certificate {{ ssl_cert }};
+        ssl_certificate_key {{ ssl_cert_key }};
 
         server_tokens off;
         ssl_session_tickets off;
@@ -38,7 +38,7 @@ http {
         ssl_buffer_size 8k;
         ssl_session_cache shared:le_nginx_SSL:1m;
         ssl_session_timeout 1d;
-        ssl_dhparam /etc/nginx/dh4096.pem;
+        ssl_dhparam /etc/nginx/dhparams.pem;
 
         #
         # Supports Firefox 27, Android 4.4.2, Chrome 31, Edge, IE 11 on Windows 7, Java 8u31, OpenSSL 1.0.1, Opera 20, and Safari 9 and above
@@ -65,21 +65,9 @@ http {
 
         include /etc/nginx/mime.types;
 
-        ## Janus Static Pages & Demos
-        location ^~ /janus-gateway-test/ {
-            alias /var/www/janus-gateway/html/;
-            index index.html;
-
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
-        }
-
         ## RTP Web Admin
-        location ^~ /rtp-web-admin/ {
-            alias /var/www/rtp-web-admin/html/;
+        location ^~ /web-admin/ {
+            alias /var/www/web-admin/html/;
             index index.html;
 
             proxy_http_version 1.1;
