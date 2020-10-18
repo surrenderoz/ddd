@@ -86,7 +86,7 @@
 general: {
 	#admin_key = "supersecret"		# If set, mountpoints can be created via API
 									# only if this key is provided in the request
-	rtp_port_range = "10000-10200"	# Range of ports to use for RTP/RTCP when '0' is
+	rtp_port_range = "{{ rtp_port_range }}" # Range of ports to use for RTP/RTCP when '0' is
 									# passed as port for a mountpoint (default=10000-60000)
 	#events = false					# Whether events should be sent to event
 									# handlers (default=true)
@@ -105,24 +105,24 @@ general: {
 # plugins/streams folder sends to. Whatever is sent to those ports will
 # be the source of a WebRTC broadcast users can subscribe to.
 #
-rtp-sample: {
-	type = "rtp"
-	id = 1
-	description = "Opus/VP8 live stream coming from external source"
-	metadata = "You can use this metadata section to put any info you want!"
-	audio = true
-	video = true
-	data = true
-	audioport = 5002
-	audiopt = 111
-	audiortpmap = "opus/48000/2"
-	videoport = 5004
-	videopt = 100
-	videortpmap = "VP8/90000"
-	secret = "adminpwd"
-	dataport = 5006
-	datatype = "text"
-}
+#rtp-sample: {
+#	type = "rtp"
+#	id = 1
+#	description = "Opus/VP8 live stream coming from external source"
+#	metadata = "You can use this metadata section to put any info you want!"
+#	audio = true
+#	video = true
+#	data = true
+#	audioport = 5002
+#	audiopt = 111
+#	audiortpmap = "opus/48000/2"
+#	videoport = 5004
+#	videopt = 100
+#	videortpmap = "VP8/90000"
+#	secret = "adminpwd"
+#	dataport = 5006
+#	datatype = "text"
+#}
 
 #
 # This is a sample of the file-based streaming support. Specifically,
@@ -131,15 +131,15 @@ rtp-sample: {
 # this mountpoint will listen to the same broadcast as if it were live.
 # Notice that file-based streaming supports Opus files too, but no video.
 #
-file-live-sample: {
-	type = "live"
-	id = 2
-	description = "a-law file source (radio broadcast)"
-	filename = "/usr/local/share/janus/streams/radio.alaw"
-	audio = true
-	video = false
-	secret = "adminpwd"
-}
+#file-live-sample: {
+#	type = "live"
+#	id = 2
+#	description = "a-law file source (radio broadcast)"
+#	filename = "/usr/local/share/janus/streams/radio.alaw"
+#	audio = true
+#	video = false
+#	secret = "adminpwd"
+#}
 
 #
 # This is another sample of the file-based streaming support, but using
@@ -149,15 +149,15 @@ file-live-sample: {
 # of the stream, meaning that it will start from the beginning and then
 # loop when it's over. On-demand streaming supports Opus files as well.
 #
-file-ondemand-sample: {
-	type = "ondemand"
-	id = 3
-	description = "mu-law file source (music)"
-	filename = "/usr/local/share/janus/streams/music.mulaw"
-	audio = true
-	video = false
-	secret = "adminpwd"
-}
+#file-ondemand-sample: {
+#	type = "ondemand"
+#	id = 3
+#	description = "mu-law file source (music)"
+#	filename = "/usr/local/share/janus/streams/music.mulaw"
+#	audio = true
+#	video = false
+#	secret = "adminpwd"
+#}
 
 #
 # All browsers also support H.264, often through Cisco's OpenH264 plugin.
@@ -169,18 +169,18 @@ file-ondemand-sample: {
 # an x264enc+rtph264pay pipeline in gstreamer, an ffmpeg script or other.
 #
 #h264-sample: {
-	#type = "rtp"
-	#id = 10
-	#description = "H.264 live stream coming from gstreamer"
-	#audio = false
-	#video = true
-	#data = true
-	#videoport = 8004
-	#videopt = 126
-	#videortpmap = "H264/90000"
-	#videofmtp = "profile-level-id=42e01f;packetization-mode=1"
-	#dataport = 8005
-	#datatype = "text"
+#	type = "rtp"
+#	id = 10
+#	description = "H.264 live stream coming from gstreamer"
+#	audio = false
+#	video = true
+#	data = true
+#	videoport = 8004
+#	videopt = 126
+#	videortpmap = "H264/90000"
+#	videofmtp = "profile-level-id=42e01f;packetization-mode=1"
+#	dataport = 8005
+#	datatype = "text"
 #}
 
 #
@@ -193,14 +193,14 @@ file-ondemand-sample: {
 # datachannel messages will be sent as usual, and not use RTP at all.
 #
 #data-example: {
-	#type = "rtp"
-	#id = 15
-	#description = "Datachannel stream from an UDP source"
-	#audio = false
-	#video = false
-	#data = true
-	#dataport = 5008
-	#datatype = "text"
+#	type = "rtp"
+#	id = 15
+#	description = "Datachannel stream from an UDP source"
+#	audio = false
+#	video = false
+#	data = true
+#	dataport = 5008
+#	datatype = "text"
 #}
 
 #
@@ -209,19 +209,19 @@ file-ondemand-sample: {
 # need an external script to feed data on those ports, of course.
 #
 #rtp-multicast: {
-	#type = "rtp"
-	#id = 20
-	#description = "Opus/VP8 live multicast stream sample"
-	#audio = true
-	#video = true
-	#audioport = 5002
-	#audiomcast = "232.3.4.5"
-	#audiopt = 111
-	#audiortpmap = "opus/48000/2"
-	#videoport = 5004
-	#videomcast = "232.3.4.5"
-	#videopt = 100
-	#videortpmap = "VP8/90000"
+#	type = "rtp"
+#	id = 20
+#	description = "Opus/VP8 live multicast stream sample"
+#	audio = true
+#	video = true
+#	audioport = 5002
+#	audiomcast = "232.3.4.5"
+#	audiopt = 111
+#	audiortpmap = "opus/48000/2"
+#	videoport = 5004
+#	videomcast = "232.3.4.5"
+#	videopt = 100
+#	videortpmap = "VP8/90000"
 #}
 
 #
@@ -234,42 +234,12 @@ file-ondemand-sample: {
 # Again, you can override payload type, rtpmap and/or fmtp, if needed.
 #
 #rtsp-test: {
-	#type = "rtsp"
-	#id = 99
-	#description = "RTSP Test"
-	#audio = false
-	#video = true
-	#url = "rtsp://127.0.0.1:8554/unicast"
-	#rtsp_user = "username"
-	#rtsp_pwd = "password"
+#	type = "rtsp"
+#	id = 99
+#	description = "RTSP Test"
+#	audio = false
+#	video = true
+#	url = "rtsp://127.0.0.1:8554/unicast"
+#	rtsp_user = "username"
+#	rtsp_pwd = "password"
 #}
-
-rtp-test: {
-    type = "rtp"
-
-    id = "RTPtest"
-    description = "This is RTP Test for Headwind"
-    is_private = false  # TODO: true
-    secret = "adminpwd"
-    pin = "viewpwd"
-    audio = true  # TODO: false
-    video = true
-    data = false
-
-    # TODO: comment audio options
-    audioport = 5030  # audioport = local port for receiving audio frames
-    # audioiface = network interface or IP address to bind to, if any (binds to all otherwise)
-    audiopt = 111 # audiopt = <audio RTP payload type> (e.g., 111)
-    audiortpmap = "opus/48000/2"  # audiortpmap = RTP map of the audio codec (e.g., opus/48000/2)
-
-    videoport = 5020  # TODO: will be provide automatically
-    # videoiface = network interface or IP address to bind to, if any (binds to all otherwise)
-    videopt = 100
-    videortpmap = "VP8/90000"
-    videobufferkf = true # TODO: experimental feature
-    # videosimulcast = true|false (do|don't enable video simulcasting)
-    # videoport2 = second local port for receiving video frames (only for rtp, and simulcasting)
-    # videoport3 = third local port for receiving video frames (only for rtp, and simulcasting)
-    # videoskew = true  # TODO: experimental feature
-    # videosvc = true|false (whether the video will have SVC support; works only for VP9-SVC, default=false)
-}
