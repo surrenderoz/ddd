@@ -1,6 +1,6 @@
 ---
 
-- name: run the playbook tasks on the localhost
+- name: Install prerequisites
   hosts: localhost
   connection: local
   become: yes
@@ -52,3 +52,17 @@
       name: "{{ lookup('env', 'USER') }}"
       groups: docker
       append: true
+    when: "ansible_user_id != 'root'"
+
+  - name: Download docker-compose
+    get_url:
+      url: https://github.com/docker/compose/releases/download/1.26.0/docker-compose-{{ ansible_system }}-{{ ansible_machine }}
+      dest: /usr/local/bin/docker-compose
+      mode: 0755
+      force: yes
+
+  - name: Download docker-compose autocompletion (for bash only)
+    get_url:
+      url: https://raw.githubusercontent.com/docker/compose/1.26.0/contrib/completion/bash/docker-compose
+      dest: /etc/bash_completion.d/docker-compose
+    when: "'/bash' in ansible_user_shell"
