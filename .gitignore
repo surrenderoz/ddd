@@ -170,3 +170,6 @@ load_testing/initial_data_generator/data
 # Haproxy for testing data file
 haproxy_acl.yml
 ems-result-*
+
+# Other
+deploy/config_local.yaml
