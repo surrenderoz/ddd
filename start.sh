@@ -5,7 +5,7 @@ if ! [[ -x "$(command -v docker-compose)" ]]; then
   exit 1
 fi
 
-data_path="./certbot/etc-dir"
+data_path="./certbot/etc"
 rsa_key_size=4096
 
 # Read saved from file
