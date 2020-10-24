@@ -48,8 +48,7 @@
       enabled: true
 
   - name: Ensure current user is added to the docker group
-      user:
-        name: "{{ lookup('env', 'USER') }}"
-        groups: docker
-        append: true
-      when: "{{ lookup('env', 'USER') }}" != "root"
+    user:
+      name: "{{ lookup('env', 'USER') }}"
+      groups: docker
+      append: true
