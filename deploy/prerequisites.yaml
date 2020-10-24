@@ -10,7 +10,7 @@
 
   tasks:
 
-  - name: Update the APT package index, install prerequisites
+  - name: Update the APT package index, install packages
     apt:
       package:
       - git
@@ -27,5 +27,7 @@
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
 
-#  - name: Add docker repository
-#    apt_repository:
+  - name: Add docker repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+      state: present
