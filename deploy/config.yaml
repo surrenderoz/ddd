@@ -7,19 +7,19 @@ is_certbot_enabled: true
 
 ## Janus
 # REST API
-api_http: true  # true|false - strict! It is the string to paste into Janus config
+api_http: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
 api_http_port: 8088
 
 # REST API (secure)
-api_https: true  # true|false - strict! It is the string to paste into Janus config
+api_https: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
 api_https_port: 8089
 
 # Admin REST API (Secure)
-admin_api_https: false  # true|false - strict! It is the string to paste into Janus config
+admin_api_https: "false"  # "true" | "false" - strict! It is the string to paste into Janus config
 admin_api_https_port: 7889
 
 # Websockets API (Secure)
-api_wss: true  # true|false - strict! It is the string to paste into Janus config
+api_wss: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
 api_wss_port: 8989
 
 ## Nginx
