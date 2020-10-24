@@ -19,8 +19,8 @@ services:
 #      - "80:80"
 #      - "443:443"
     volumes:
-      - ./nginx-conf/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx-conf/dh4096.pem:/etc/nginx/dh4096.pem
+      - ./deploy/dist/conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./deploy/dist/conf/nginx/dhparams.pem:/etc/nginx/dhparams.pem
       - certbot-etc:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
       - ./janus-static-html:/var/www/janus-gateway/html
@@ -31,9 +31,9 @@ services:
   janus:
     build:
       context: janus-gateway
-      dockerfile: Dockerfile
+      dockerfile: ./deploy/images/janus-gateway/Dockerfile
     volumes:
-      - ./janus-conf:/usr/local/etc/janus
+      - ./deploy/dist/conf/janus:/usr/local/etc/janus
       - certbot-etc:/etc/letsencrypt
     network_mode: host
 #    ports:
