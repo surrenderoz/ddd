@@ -1,18 +1,16 @@
+---
+
+- import_playbook: prerequisites.yaml
+
 - name: Install
   hosts: localhost
   connection: local
+  become: yes
   vars_files:
     - config.yaml
     - config_local.yaml
 
   tasks:
-
-#
-# PREREQUISITES
-#
-
-    - name: Install prerequisites
-      import_playbook: prerequisites.yaml
 
 #
 # JANUS
