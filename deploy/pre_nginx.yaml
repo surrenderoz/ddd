@@ -1,6 +1,6 @@
 ---
 
-- name: Install
+- name: Prepare Nginx
   hosts: localhost
   connection: local
   become: yes

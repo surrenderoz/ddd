@@ -1,6 +1,6 @@
 ---
 
-- name: Install
+- name: Prepare Janus
   hosts: localhost
   connection: local
   become: yes
