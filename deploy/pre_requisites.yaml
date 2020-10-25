@@ -19,18 +19,17 @@
       - curl
       - gnupg-agent
       - software-properties-common
-      - python3-setuptools
-      - python3-pip
+      - python-setuptools
+      - python-pip
       update_cache: yes
       state: latest
 
   - name: Install required python packages
     pip:
       name:
-        - docker>=1.8.0
+        - docker==4.3.0
         - PyYAML>=3.11
-        - docker-compose>=1.7.0
-      executable: pip3
+        - docker-compose>=1.26.0
 
   - name: Add key for docker repository
     apt_key:
