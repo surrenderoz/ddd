@@ -138,13 +138,12 @@ COPY --from=BUILD /usr/local/share/janus /usr/local/share/janus
 RUN mkdir /usr/local/etc/janus
 
 # SECURE ports (REST, Admin&Monitor REST, WebSockets, Admin&Monitor WebSockets)
-EXPOSE 8089 7889 8989 7989
+# EXPOSE 8089 7889 8989 7989  # default ports, but disabled due to "host" network mode
 
 # INSECURE ports (REST, Admin&Monitor REST, WebSockets, Admin&Monitor WebSockets)
-EXPOSE 8088 7088 8188 7188
+# EXPOSE 8088 7088 8188 7188  # default ports, but disabled due to "host" network mode
 
 # RTP/RTCP ports
-EXPOSE 10000-10200/udp
+# EXPOSE 10000-10200/udp  # default ports, but disabled due to "host" network mode
 
-# TODO test CMD ["/usr/local/bin/janus", "--nat-1-1=${DOCKER_IP}"]
 CMD ["/usr/local/bin/janus"]
