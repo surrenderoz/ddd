@@ -1,0 +1,35 @@
+---
+
+- name: Install
+  hosts: localhost
+  connection: local
+  become: yes
+  vars_files:
+    - config.yaml
+    - config_local.yaml
+
+  tasks:
+    - name: Build Janus Gateway image
+      docker_image:
+        name: janus-gateway:0.10.6
+        source: build
+        build:
+          path: ./images/janus-gateway
+          rm: yes
+          pull: yes
+
+    - name: Process Janus configuration files
+      block:
+      - name: Process Janus configuration files (templated)
+        template:
+          src: "{{ item }}"
+          dest: ./dist/conf/janus/{{ item | basename | regex_replace('\.j2$', '') }}
+        with_fileglob:
+          - ./templates/janus/*.j2
+
+      - name: Process Janus configuration files
+        copy:
+          src: "{{ item }}"
+          dest: ./dist/conf/janus/{{ item | basename }}
+        with_fileglob:
+          - ./templates/janus/*.jcfg

@@ -1,7 +1,5 @@
 ---
 
-- import_playbook: prerequisites.yaml
-
 - name: Install
   hosts: localhost
   connection: local
@@ -11,58 +9,11 @@
     - config_local.yaml
 
   tasks:
+    - name: Switch to install prerequisites
+      import_playbook: pre_requisites.yaml
 
-#
-# JANUS
-#
+    - name: Switch to prepare Janus gateway
+      import_playbook: pre_janus.yaml
 
-    - name: Build Janus Gateway image
-      docker_image:
-        name: janus-gateway:0.10.6
-        source: build
-        build:
-          path: ./images/janus-gateway
-          rm: yes
-          pull: yes
-
-    - name: Process Janus configuration files (templated)
-      template:
-        src: "{{ item }}"
-        dest: ./dist/conf/janus/{{ item | basename | regex_replace('\.j2$', '') }}
-      with_fileglob:
-        - ./templates/janus/*.j2
-
-    - name: Process Janus configuration files
-      template:
-        src: "{{ item }}"
-        dest: ./dist/conf/janus/{{ item | basename }}
-      with_fileglob:
-        - ./templates/janus/*.jcfg
-
-
-#
-# NGINX
-#
-
-    - name: Process Nginx configuration files (templated)
-      template:
-        src: "{{ item }}"
-        dest: ./dist/conf/nginx/{{ item | basename | regex_replace('\.j2$', '') }}
-      with_fileglob:
-        - ./templates/nginx/*.j2
-
-    - name: Check that the Diffie-Hellman parameters file is exists
-      stat:
-        path: ./dist/conf/nginx/dhparams.pem
-      register: dhparams_stat_result
-
-    - name: Generate Diffie-Hellman parameters file with 4096 bits size. NOTE THAT IT WILL TAKE REALLY MUCH TIME!
-      # https://docs.ansible.com/ansible/2.9/modules/openssl_dhparam_module.html
-      openssl_dhparam:
-        path: ./dist/conf/nginx/dhparams.pem
-        size: 4096
-        state: present
-        #owner:
-        #group:
-        #mode:
-      when: not dhparams_stat_result.stat.exists
+    - name: Switch to prepare Nginx webserver
+      import_playbook: pre_nginx.yaml

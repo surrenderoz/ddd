@@ -72,3 +72,17 @@
       url: https://raw.githubusercontent.com/docker/compose/1.26.0/contrib/completion/bash/docker-compose
       dest: /etc/bash_completion.d/docker-compose
     when: "'/bash' in ansible_user_shell"
+
+  - name: Ensure aPuppet is not running
+    docker_compose:
+      project_src: ./dist/
+      state: absent
+      stopped: yes
+      remove_volumes: yes
+      timeout: 30
+
+#  - name: Start aPuppet
+#    docker_compose:
+#      project_src: ./dist/
+#      state: present
+#      stopped: no

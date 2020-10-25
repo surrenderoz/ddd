@@ -24,13 +24,15 @@
 
 `apt install -y git`
 
-Требуется установить Ansible версии 2.9.x [^1]
+Требуется установить Ansible версии 2.9.x[^ansible-version-warning].
 
-Ubuntu Focal (20.04 LTS) - в репозитории имеется нужная версия:
+[^ansible-version-warning] В будущем при установке Ansible из официального PPA может возникнуть ситуация, когда нужная нам версия 2.9.x заменится версией 2.10.x (или старше). В таком случае система развёртывания продукта работать не будет (в версии 2.10 произошли существенные изменения). Обратитесь к разработчику aPuppet, чтобы он предоставил актуальные на тот момент скрипты развёртывания продукта.
 
-`sudo apt install -y ansible`
+Для Ubuntu Focal (20.04 LTS) в репозитории имеется нужная версия:
 
-Ubuntu Xenial (16.04 LTS), Ubuntu Bionic (18.04 LTS) - системный пакет не подходит, так как устарел, устанавливаем из [официального PPA](https://launchpad.net/~ansible/+archive/ubuntu/ansible)
+`sudo apt install -y ansible=2.9.*`
+
+Для Ubuntu Xenial (16.04 LTS) и Ubuntu Bionic (18.04 LTS) системный пакет не подходит (устарел), поэтому устанавливаем нужную нам версию пакета из [официального PPA](https://launchpad.net/~ansible/+archive/ubuntu/ansible):
 
 ```
 sudo apt update
@@ -39,9 +41,7 @@ sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt install -y ansible=2.9.*
 ```
 
-[^1] В будущем при установке Ansible из PPA может возникнуть ситуация, когда из репозитория пропадёт нужная нам версия 2.9.x, и там окажется версия 2.10.x и старше. В данном случае система развёртывания продукта работать не будет. Обратитесь к разработчику aPuppet, чтобы он предоставил актуальные на тот момент скрипты развёртывания продукта._
-
-Подробнее об установке Ansible можно узнать из [официальной документации](https://docs.ansible.com/ansible/2.9/installation_guide/intro_installation.html).
+_Подробнее об установке Ansible можно узнать из [официальной документации](https://docs.ansible.com/ansible/2.9/installation_guide/intro_installation.html)_.
 
 ### Установка продукта
 
