@@ -30,6 +30,7 @@
         - docker>=1.8.0
         - PyYAML>=3.11
         - docker-compose>=1.7.0
+      executable: pip3
 
   - name: Add key for docker repository
     apt_key:
