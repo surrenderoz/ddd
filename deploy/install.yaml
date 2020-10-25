@@ -16,6 +16,14 @@
 # JANUS
 #
 
+    - name: Build Janus Gateway image
+      docker_image:
+        name: janus-gateway:0.10.6
+        source: build
+        build:
+          path: ./images/janus-gateway
+          rm: yes
+
     - name: Process Janus configuration files (templated)
       template:
         src: "{{ item }}"
@@ -29,14 +37,6 @@
         dest: ./dist/conf/janus/{{ item | basename }}
       with_fileglob:
         - ./templates/janus/*.jcfg
-
-    - name: Build Janus Gateway image
-      docker_image:
-        name: janus-gateway:v0.10.6
-        source: build
-        build:
-          path: ./images/janus-gateway
-          rm: yes
 
 
 #
