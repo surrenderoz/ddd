@@ -23,6 +23,7 @@
         build:
           path: ./images/janus-gateway
           rm: yes
+          pull: yes
 
     - name: Process Janus configuration files (templated)
       template:
