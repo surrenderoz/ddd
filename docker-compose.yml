@@ -29,9 +29,7 @@ services:
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
   janus:
-    build:
-      context: janus-gateway
-      dockerfile: ./deploy/images/janus-gateway/Dockerfile
+    image: janus-gateway:0.10.6
     volumes:
       - ./deploy/dist/conf/janus:/usr/local/etc/janus
       - certbot-etc:/etc/letsencrypt

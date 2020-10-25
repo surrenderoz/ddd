@@ -10,7 +10,7 @@
 
   tasks:
 
-  - name: Update the APT package index, install packages
+  - name: Install required system packages
     apt:
       package:
       - git
@@ -19,8 +19,14 @@
       - curl
       - gnupg-agent
       - software-properties-common
+      - python-setuptools
+      - python-pip
       update_cache: yes
       state: latest
+
+  - name: Install required python packages
+    pip:
+      name: docker
 
   - name: Add key for docker repository
     apt_key:
