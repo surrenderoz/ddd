@@ -8,12 +8,11 @@
     - config.yaml
     - config_local.yaml
 
-  tasks:
-    - name: Switch to install prerequisites
-      import_playbook: pre_requisites.yaml
+- name: Switch to install prerequisites
+  import_playbook: pre_requisites.yaml
 
-    - name: Switch to prepare Janus gateway
-      import_playbook: pre_janus.yaml
+- name: Switch to prepare Janus gateway
+  import_playbook: pre_janus.yaml
 
-    - name: Switch to prepare Nginx webserver
-      import_playbook: pre_nginx.yaml
+- name: Switch to prepare Nginx webserver
+  import_playbook: pre_nginx.yaml
