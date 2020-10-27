@@ -26,7 +26,8 @@
     - name: Start Nginx for ACME challenge
       docker_compose:
         project_src: ./dist/
-        services: nginx
+        services:
+          - nginx
         state: present
         restarted: yes
 

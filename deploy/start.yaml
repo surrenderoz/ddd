@@ -37,8 +37,9 @@
         src: ./templates/docker-compose/docker-compose.yaml.j2
         dest: ../docker-compose.yaml
 
-    - name: Start aPuppet
+    - name: (Re)Start aPuppet
       docker_compose:
         project_src: ./dist/
         state: present
         stopped: no
+        restarted: yes
