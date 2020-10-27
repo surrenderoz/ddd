@@ -58,7 +58,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: $PWD/certbot/etc
+      device: $PWD/dist/certbot/etc
 
   # WWW certbot root directory, eg. for ACME challenge (FROM nginx FOR certbot)
   www-certbot-root:
