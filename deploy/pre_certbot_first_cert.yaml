@@ -1,0 +1,61 @@
+---
+
+- name: Prepare Janus
+  hosts: localhost
+  connection: local
+  become: yes
+  vars_files:
+    - config.yaml
+    - config_local.yaml
+
+  tasks:
+    - name: Ensure aPuppet is not running
+      docker_compose:
+        project_src: ./dist/
+        state: absent
+        stopped: yes
+        remove_volumes: yes
+
+    - name: Process Nginx configuration for ACME challenge
+      template:
+        src: "{{ item }}"
+        dest: ./dist/conf/nginx/{{ item | basename | regex_replace('\.j2$', '') }}
+      with_fileglob:
+        - ./templates/nginx-acme/*.j2
+
+    - name: Start Nginx for ACME challenge
+      docker_compose:
+        project_src: ./dist/
+        services: nginx
+        state: present
+        restarted: yes
+
+#    - name: Obtain new certificate
+#      acme_certificate:
+#        - account_email: {{ email }}
+#        - acme_directory: https://acme-v01.api.letsencrypt.org/directory
+#        - terms_agreed: yes
+#        - fullchain_dest: ./dist/certbot/etc/
+
+
+    - name: Run certbot
+      shell: |
+        case "{{ share_email }}" in
+          "true") eff_arg="--eff-email" ;;
+          "false") eff_arg="--no-eff-email" ;;
+        esac
+
+        docker-compose run --rm --entrypoint "\
+          certbot certonly --webroot -w /var/www/certbot \
+            --email {{ email }} \
+            $eff_arg
+            -d {{ hostname }} \
+            --rsa-key-size 4096 \
+            --agree-tos" certbot
+
+    - name: Stop services
+      docker_compose:
+        project_src: ./dist/
+        state: absent
+        stopped: yes
+        remove_volumes: yes

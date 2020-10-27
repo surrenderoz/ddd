@@ -37,7 +37,5 @@ ssl_cert_key: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
 
 # Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot
 share_email: true
-# Is it STAGING environment (will create TEST certificates for hostname)
-staging: true
 # Recreate and replace existing certificate on start in the future
 force_recreate_ssl_cert: true
