@@ -150,7 +150,7 @@ if [[ ${NEED_TO_OBTAIN_CERT} != "0" ]]; then
     certbot certonly --webroot -w /var/www/certbot \
       $staging_arg \
       $email_arg \
-      $eff_arg
+      $eff_arg \
       $domain_args \
       --rsa-key-size $rsa_key_size \
       --agree-tos \

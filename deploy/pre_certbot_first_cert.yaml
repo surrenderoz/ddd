@@ -30,14 +30,6 @@
         state: present
         restarted: yes
 
-#    - name: Obtain new certificate
-#      acme_certificate:
-#        - account_email: {{ email }}
-#        - acme_directory: https://acme-v01.api.letsencrypt.org/directory
-#        - terms_agreed: yes
-#        - fullchain_dest: ./dist/certbot/etc/
-
-
     - name: Run certbot
       shell: |
         case "{{ share_email }}" in
