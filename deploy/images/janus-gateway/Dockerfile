@@ -74,7 +74,7 @@ RUN cd /tmp/sources/ && git clone https://boringssl.googlesource.com/boringssl \
 # Build Janus Gateway
 RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git \
     && cd janus-gateway \
-    && git checkout v0.10.6 \
+    && git checkout v0.10.2 \
     && sh autogen.sh \
     && ./configure \
       # General
