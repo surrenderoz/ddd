@@ -1,0 +1,38 @@
+---
+
+- name: Prepare Nginx
+  hosts: localhost
+  connection: local
+  become: yes
+  vars_files:
+    - config.yaml
+    - config_local.yaml
+
+  tasks:
+    - name: Process Nginx configuration
+      template:
+        src: "{{ item }}"
+        dest: ./dist/conf/nginx/{{ item | basename | regex_replace('\.j2$', '') }}
+      with_fileglob:
+        - ./templates/nginx/*.j2
+
+    - name: Process Janus configuration
+      block:
+        - name: Process Janus configuration files (templated)
+          template:
+            src: "{{ item }}"
+            dest: ./dist/conf/janus/{{ item | basename | regex_replace('\.j2$', '') }}
+          with_fileglob:
+            - ./templates/janus/*.j2
+
+        - name: Process Janus configuration files
+          copy:
+            src: "{{ item }}"
+            dest: ./dist/conf/janus/{{ item | basename }}
+          with_fileglob:
+            - ./templates/janus/*.jcfg
+
+    - name: Process docker-compose configuration
+      template:
+        src: ./templates/docker-compose/docker-compose.yaml.j2
+        dest: ../docker-compose.yaml

@@ -9,13 +9,6 @@
     - config_local.yaml
 
   tasks:
-    - name: Process Nginx configuration files (templated)
-      template:
-        src: "{{ item }}"
-        dest: ./dist/conf/nginx/{{ item | basename | regex_replace('\.j2$', '') }}
-      with_fileglob:
-        - ./templates/nginx/*.j2
-
     - name: Prepare Diffie-Hellman parameters file
       block:
         - name: Check that the Diffie-Hellman parameters file is exists

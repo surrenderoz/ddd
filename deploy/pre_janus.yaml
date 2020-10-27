@@ -17,19 +17,3 @@
           path: ./images/janus-gateway
           rm: yes
           pull: yes
-
-    - name: Process Janus configuration files
-      block:
-      - name: Process Janus configuration files (templated)
-        template:
-          src: "{{ item }}"
-          dest: ./dist/conf/janus/{{ item | basename | regex_replace('\.j2$', '') }}
-        with_fileglob:
-          - ./templates/janus/*.j2
-
-      - name: Process Janus configuration files
-        copy:
-          src: "{{ item }}"
-          dest: ./dist/conf/janus/{{ item | basename }}
-        with_fileglob:
-          - ./templates/janus/*.jcfg
