@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 AS BUILD
+FROM ubuntu:20.04 AS BUILD
 
 # Build deps
 RUN apt-get update -y && \
@@ -26,27 +26,23 @@ RUN apt-get update -y && \
 		ca-certificates \
 		golang \
         gtk-doc-tools \
+        meson \
+        ninja-build \
     && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
-
-#RUN apt-get update -y && \
-#    apt-get install -y --no-install-recommends \
-#        meson \
-#        ninja-build \
-#    && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
 RUN mkdir /tmp/sources
 
 # Build libnice
 RUN cd /tmp/sources/ && git clone https://gitlab.freedesktop.org/libnice/libnice.git/ \
     && cd libnice \
-    && git checkout tags/0.1.17 \
-#    && meson builddir \
-#    && ninja -C builddir \
-#    && ninja -C builddir test \
-#    && ninja -C builddir install \
-    && ./autogen.sh \
-    && ./configure --prefix=/usr \
-    && make && make install
+    && git checkout tags/0.1.18 \
+    && meson builddir \
+    && ninja -C builddir \
+    && ninja -C builddir test \
+    && ninja -C builddir install \
+#    && ./autogen.sh \
+#    && ./configure --prefix=/usr \
+#    && make && make install
 
 # Build libsrtp
 RUN cd /tmp/sources/ && wget https://github.com/cisco/libsrtp/archive/v2.3.0.tar.gz \
