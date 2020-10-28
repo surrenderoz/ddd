@@ -41,7 +41,8 @@ RUN cd /tmp/sources/ && git clone https://gitlab.freedesktop.org/libnice/libnice
     && meson builddir \
     && ninja -C builddir \
     && ninja -C builddir test \
-    && ninja -C builddir install \
+    && ninja -C builddir install
+
 #    && ./autogen.sh \
 #    && ./configure --prefix=/usr \
 #    && make && make install
