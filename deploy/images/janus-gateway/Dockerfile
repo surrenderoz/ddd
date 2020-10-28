@@ -33,7 +33,7 @@ RUN mkdir /tmp/sources
 # Build libnice
 RUN cd /tmp/sources/ && git clone https://gitlab.freedesktop.org/libnice/libnice.git/ \
     && cd libnice \
-    && git checkout tags/0.1.16 \
+    && git checkout tags/0.1.18 \
     && ./autogen.sh \
     && ./configure --prefix=/usr \
     && make && make install
