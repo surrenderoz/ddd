@@ -1,6 +1,8 @@
 FROM ubuntu:20.04 AS BUILD
 
 # Build deps
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         libmicrohttpd-dev \
