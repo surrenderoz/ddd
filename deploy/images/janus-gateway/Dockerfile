@@ -28,15 +28,25 @@ RUN apt-get update -y && \
         gtk-doc-tools \
     && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        meson \
+        ninja-build \
+    && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
+
 RUN mkdir /tmp/sources
 
 # Build libnice
 RUN cd /tmp/sources/ && git clone https://gitlab.freedesktop.org/libnice/libnice.git/ \
     && cd libnice \
     && git checkout tags/0.1.18 \
-    && ./autogen.sh \
-    && ./configure --prefix=/usr \
-    && make && make install
+    && meson builddir \
+    && ninja -C builddir \
+    && ninja -C builddir test \
+    && ninja -C builddir install \
+#    && ./autogen.sh \
+#    && ./configure --prefix=/usr \
+#    && make && make install
 
 # Build libsrtp
 RUN cd /tmp/sources/ && wget https://github.com/cisco/libsrtp/archive/v2.3.0.tar.gz \
