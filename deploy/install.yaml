@@ -19,3 +19,10 @@
 - name: Switch to prepare Nginx webserver
   import_playbook: pre_nginx.yaml
   when: is_nginx_enabled == True
+
+- name: Switch to prepare aPuppet
+  import_playbook: pre_apuppet.yaml
+
+- name: Switch to prepare Letsencrypt SSL certificate
+  import_playbook: pre_certbot_first_cert.yaml
+  when: is_certbot_enabled == True

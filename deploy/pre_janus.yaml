@@ -3,7 +3,6 @@
 - name: Prepare Janus
   hosts: localhost
   connection: local
-  become: yes
   vars_files:
     - config_internal.yaml
     - config.yaml
