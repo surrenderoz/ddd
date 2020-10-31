@@ -117,7 +117,9 @@ RUN apt-get -y update \
 COPY --from=BUILD /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0
 RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10
 RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so
-ENV PATH="/usr/local/lib/x86_64-linux-gnu/:${PATH}"
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10.11.0
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so
 
 # libsrtp
 COPY --from=BUILD /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so.1
