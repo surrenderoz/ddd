@@ -31,7 +31,7 @@ general: {
 											# started, and to destroy at shutdown
 
 		# There are different ways you can authenticate the Janus and Admin APIs
-	#api_secret = "janusrocks"		# String that all Janus requests must contain
+	api_secret = "{{ janus_api_secret }}" # String that all Janus requests must contain
 									# to be accepted/authorized by the Janus core.
 									# Useful if you're wrapping all Janus API requests
 									# in your servers (that is, not in the browser,
