@@ -21,8 +21,13 @@
       - gnupg-agent
       - software-properties-common
       - python-setuptools
-      - python-pip
+#      - python-pip
       update_cache: yes
+      state: latest
+
+  - name: Install python2 pip
+    easy_install:
+      name: pip
       state: latest
 
   - name: Install required python packages
