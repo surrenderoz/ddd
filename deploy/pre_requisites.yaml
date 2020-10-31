@@ -20,15 +20,19 @@
       - curl
       - gnupg-agent
       - software-properties-common
-      - python-setuptools
-#      - python-pip
+      - python2
       update_cache: yes
       state: latest
 
-  - name: Install python2 pip
-    easy_install:
-      name: pip
-      state: latest
+  - name: Download pip for Python2
+    get_url:
+      url: https://bootstrap.pypa.io/get-pip.py
+      dest: /tmp/.get-pip.py
+      mode: 0644
+      force: yes
+
+  - name: Install pip for Python2
+    shell: python2 /tmp/.get-pip.py
 
   - name: Install required python packages
     pip:
