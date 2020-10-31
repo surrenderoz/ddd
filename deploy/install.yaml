@@ -18,3 +18,4 @@
 
 - name: Switch to prepare Nginx webserver
   import_playbook: pre_nginx.yaml
+  when: is_nginx_enabled == True
