@@ -8,6 +8,8 @@
     - config.yaml
     - config_local.yaml
 
+  tasks:
+
     - name: Process secret for all Janus API requests
       set_fact:
         janus_api_secret: "{{ lookup('password', 'credentials/janus_api_secret length=6 chars=digits') }}"
