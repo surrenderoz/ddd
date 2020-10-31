@@ -13,9 +13,8 @@
 
   tasks:
     - name: (Re)Start aPuppet
-#      docker_compose:
-#        project_src: ../
-#        state: present
-#        stopped: no
-#        restarted: yes
-    shell: docker-compose -f ./../docker-compose.yaml up --detach
+      docker_compose:
+        project_src: ../
+        state: present
+        stopped: no
+        restarted: yes
