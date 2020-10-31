@@ -172,10 +172,10 @@ general: {
 # Finally, by default NIST P-256 certificates are generated (see #1997),
 # but RSA generation is still supported if you set 'rsa_private_key' to 'true'.
 certificates: {
-	cert_pem = "{{ ssl_cert }}"
-	cert_key = "{{ ssl_cert_key }}"
+	#cert_pem = "{{ ssl_cert }}"
+	#cert_key = "{{ ssl_cert_key }}"
 	#cert_pwd = "secretpassphrase"
-	dtls_accept_selfsigned = false
+	dtls_accept_selfsigned = true
 	#dtls_ciphers = "your-desired-openssl-ciphers"
 	#rsa_private_key = false
 }
