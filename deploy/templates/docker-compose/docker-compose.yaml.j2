@@ -8,7 +8,7 @@ services:
     depends_on:
       - nginx
     volumes:
-      - certbot-etc:/etc/letsencrypt
+      - ./deploy/dist/certbot/etc:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 1d & wait $${!}; done;'"
 {% endif %}
@@ -16,14 +16,14 @@ services:
 {% if is_nginx_enabled %}
   nginx:
     image: nginx:1.18-alpine
-    depends_on:
-      - janus
+#    depends_on:
+#      - janus
     network_mode: host
     volumes:
       - ./deploy/dist/conf/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./deploy/dist/conf/nginx/dhparams.pem:/etc/nginx/dhparams.pem
 {% if is_certbot_enabled %}
-      - certbot-etc:/etc/letsencrypt
+      - ./deploy/dist/certbot/etc:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
 {% endif %}
       - ./web-admin:/var/www/web-admin/html
@@ -36,21 +36,13 @@ services:
     volumes:
       - ./deploy/dist/conf/janus:/usr/local/etc/janus
 {% if is_certbot_enabled %}
-      - certbot-etc:/etc/letsencrypt
+      - ./deploy/dist/certbot/etc:/etc/letsencrypt
 {% endif %}
     network_mode: host
     restart: unless-stopped
 
 volumes:
 {% if is_certbot_enabled %}
-  # certs (FROM "certbot" FOR nginx FOR janus)
-  certbot-etc:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: $PWD/deploy/dist/certbot/etc
-
   # WWW certbot root directory, eg. for ACME challenge (FROM nginx FOR certbot)
   www-certbot-root:
 {% endif %}
