@@ -41,7 +41,7 @@
         esac
 
         docker-compose -f ./../docker-compose.yaml run --rm --entrypoint "\
-          certbot certonly --webroot -w /var/www/certbot \
+          certbot certonly -n --webroot -w /var/www/certbot \
             --email {{ email }} \
             $eff_arg
             -d {{ hostname }} \
