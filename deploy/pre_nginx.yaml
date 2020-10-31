@@ -21,7 +21,7 @@
           # https://docs.ansible.com/ansible/2.9/modules/openssl_dhparam_module.html
           openssl_dhparam:
             path: ./dist/conf/nginx/dhparams.pem
-            size: 4096
+            size: 2048
             state: present
             #owner:
             #group:
