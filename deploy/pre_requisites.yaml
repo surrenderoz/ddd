@@ -20,19 +20,34 @@
       - curl
       - gnupg-agent
       - software-properties-common
-      - python2
       update_cache: yes
       state: latest
 
-  - name: Download pip for Python2
-    get_url:
-      url: https://bootstrap.pypa.io/get-pip.py
-      dest: /tmp/.get-pip.py
-      mode: 0644
-      force: yes
+  - name: Install python3 & setup accessories (for 20.04 and later)
+    apt:
+      package:
+      - python3
+      - python3-setuptools
+      - python3-pip
+    when: ansible_distribution_major_version|int >= 20
 
-  - name: Install pip for Python2
-    shell: python2 /tmp/.get-pip.py
+  - name: Install python2 & setup accessories (for 18.10 and earlier)
+    apt:
+      package:
+      - python2
+      - python-setuptools
+      - python-pip
+    when: ansible_distribution_major_version|int < 20
+
+#  - name: Download pip for Python2
+#    get_url:
+#      url: https://bootstrap.pypa.io/get-pip.py
+#      dest: /tmp/.get-pip.py
+#      mode: 0644
+#      force: yes
+#
+#  - name: Install pip for Python2
+#    shell: python2 /tmp/.get-pip.py
 
   - name: Install required python packages
     pip:

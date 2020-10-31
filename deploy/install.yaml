@@ -11,6 +11,7 @@
 
 - name: Switch to install prerequisites
   import_playbook: pre_requisites.yaml
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Switch to prepare Janus gateway
   import_playbook: pre_janus.yaml
