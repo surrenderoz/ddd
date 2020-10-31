@@ -40,4 +40,4 @@
     - name: Process docker-compose configuration
       template:
         src: ./templates/docker-compose/docker-compose.yaml.j2
-        dest: ./dist/docker-compose.yaml
+        dest: ../docker-compose.yaml
