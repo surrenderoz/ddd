@@ -17,3 +17,4 @@
           path: ./images/janus-gateway
           rm: yes
           pull: yes
+        force_source: yes
