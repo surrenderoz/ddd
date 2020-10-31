@@ -14,7 +14,7 @@
   tasks:
     - name: (Re)Start aPuppet
       docker_compose:
-        project_src: ./dist/
+        project_src: ../
         state: present
         stopped: no
         restarted: yes

@@ -11,7 +11,7 @@
   tasks:
     - name: Ensure aPuppet is not running
       docker_compose:
-        project_src: ./dist/
+        project_src: ../
         state: absent
         stopped: yes
         remove_volumes: yes
@@ -25,11 +25,11 @@
 
     - name: Start Nginx for ACME challenge
       docker_compose:
-        project_src: ./dist/
+        project_src: ../
         services:
           - nginx
         state: present
-        restarted: yes
+        stopped: no
 
     - name: Run certbot
       shell: |
@@ -48,7 +48,7 @@
 
     - name: Stop services
       docker_compose:
-        project_src: ./dist/
+        project_src: ../
         state: absent
         stopped: yes
         remove_volumes: yes

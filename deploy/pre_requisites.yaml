@@ -104,7 +104,7 @@
 
 #  - name: Ensure aPuppet is not running
 #    docker_compose:
-#      project_src: ./dist/
+#      project_src: ../
 #      state: absent
 #      stopped: yes
 #      remove_volumes: yes
@@ -112,6 +112,6 @@
 
 #  - name: Start aPuppet
 #    docker_compose:
-#      project_src: ./dist/
+#      project_src: ../
 #      state: present
 #      stopped: no
