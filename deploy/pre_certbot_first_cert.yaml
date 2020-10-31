@@ -15,7 +15,7 @@
 #        state: absent
 #        stopped: yes
 #        remove_volumes: yes
-      shell: docker-compose -f ../ down --volumes
+      shell: docker-compose -f ./../docker-compose.yaml down --volumes
 
     - name: Process Nginx configuration for ACME challenge
       template:
@@ -31,7 +31,7 @@
 #          - nginx
 #        state: present
 #        stopped: no
-      shell: docker-compose -f ../ up --detach nginx
+      shell: docker-compose -f ./../docker-compose.yaml up --detach nginx
 
     - name: Run certbot
       shell: |
@@ -40,7 +40,7 @@
           "false") eff_arg="--no-eff-email" ;;
         esac
 
-        docker-compose -f ../ run --rm --entrypoint "\
+        docker-compose -f ./../docker-compose.yaml run --rm --entrypoint "\
           certbot certonly --webroot -w /var/www/certbot \
             --email {{ email }} \
             $eff_arg
@@ -54,4 +54,4 @@
 #        state: absent
 #        stopped: yes
 #        remove_volumes: yes
-      shell: docker-compose -f ../ down --volumes
+      shell: docker-compose -f ./../docker-compose.yaml down --volumes

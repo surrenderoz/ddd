@@ -18,4 +18,4 @@
 #        state: present
 #        stopped: no
 #        restarted: yes
-    shell: docker-compose -f ../ up --detach
+    shell: docker-compose -f ./../docker-compose.yaml up --detach
