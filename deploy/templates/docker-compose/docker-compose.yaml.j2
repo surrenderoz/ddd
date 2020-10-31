@@ -32,7 +32,7 @@ services:
 {% endif %}
 
   janus:
-    image: janus-gateway:0.10.6
+    image: {{ janus_image_name }}:{{ janus_image_tag }}
     volumes:
       - ./deploy/dist/conf/janus:/usr/local/etc/janus
 {% if is_certbot_enabled %}

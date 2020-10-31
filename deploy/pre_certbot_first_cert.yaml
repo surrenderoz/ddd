@@ -5,6 +5,7 @@
   connection: local
   become: yes
   vars_files:
+    - config_internal.yaml
     - config.yaml
     - config_local.yaml
 

@@ -5,13 +5,14 @@
   connection: local
   become: yes
   vars_files:
+    - config_internal.yaml
     - config.yaml
     - config_local.yaml
 
   tasks:
     - name: Build Janus Gateway image
       docker_image:
-        name: janus-gateway:0.10.6
+        name: "{{ janus_image_name }}:{{ janus_image_tag }}"
         source: build
         build:
           path: ./images/janus-gateway
