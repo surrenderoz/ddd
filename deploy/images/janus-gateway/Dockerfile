@@ -1,6 +1,8 @@
-FROM ubuntu:18.04 AS BUILD
+FROM ubuntu:20.04 AS BUILD
 
 # Build deps
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
         libmicrohttpd-dev \
@@ -26,6 +28,8 @@ RUN apt-get update -y && \
 		ca-certificates \
 		golang \
         gtk-doc-tools \
+        meson \
+        ninja-build \
     && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
 RUN mkdir /tmp/sources
@@ -33,10 +37,16 @@ RUN mkdir /tmp/sources
 # Build libnice
 RUN cd /tmp/sources/ && git clone https://gitlab.freedesktop.org/libnice/libnice.git/ \
     && cd libnice \
-    && git checkout tags/0.1.16 \
-    && ./autogen.sh \
-    && ./configure --prefix=/usr \
-    && make && make install
+    && git checkout tags/0.1.18 \
+#   for versions >= 0.1.18 (Using meson & ninja)
+    && meson builddir \
+    && ninja -C builddir \
+    && ninja -C builddir test \
+    && ninja -C builddir install
+#   for versions < 0.1.18
+#    && ./autogen.sh \
+#    && ./configure --prefix=/usr \
+#    && make && make install
 
 # Build libsrtp
 RUN cd /tmp/sources/ && wget https://github.com/cisco/libsrtp/archive/v2.3.0.tar.gz \
@@ -88,7 +98,7 @@ RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git 
     && make && make install
 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 RUN apt-get -y update \
 	&& apt-get install -y \
@@ -104,10 +114,12 @@ RUN apt-get -y update \
 	&& apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
 # libnice
-COPY --from=BUILD /usr/lib/libnice.la /usr/lib/libnice.la
-COPY --from=BUILD /usr/lib/libnice.so.10.9.0 /usr/lib/libnice.so.10.9.0
-RUN ln -s /usr/lib/libnice.so.10.9.0 /usr/lib/libnice.so.10
-RUN ln -s /usr/lib/libnice.so.10.9.0 /usr/lib/libnice.so
+COPY --from=BUILD /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10.11.0
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so
 
 # libsrtp
 COPY --from=BUILD /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so.1
