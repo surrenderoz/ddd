@@ -64,6 +64,7 @@ $(document).ready(function () {
         callback: function () {
             janus = new Janus({
                 server: janusServers,
+                apisecret: apiSecret,
                 success: function () {
                     // Attach to TextRoom plugin
                     janus.attach({
