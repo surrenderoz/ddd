@@ -37,7 +37,7 @@
         # for "docker_compose" module
         - docker-compose==1.27.4
         # for dig lookup
-        - dnspython==2.0.0
+        - dnspython==1.16.0
 
   - name: Add key for docker repository
     apt_key:
