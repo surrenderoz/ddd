@@ -15,6 +15,8 @@
       msg: aPuppet need Ubuntu version 16.04 and later
     when: not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16)
 
+  - import_tasks: tasks_set_python3.yaml
+
   - name: Install required system packages
     apt:
       package:
@@ -27,39 +29,15 @@
       update_cache: yes
       state: latest
 
-  - name: Install python3 & setup accessories (for 20.04 and later)
-    apt:
-      package:
-      - python3
-      - python3-setuptools
-      - python3-pip
-    when: ansible_distribution_major_version|int >= 20
-
-  - name: Install python2 & setup accessories (for 18.10 and earlier)
-    apt:
-      package:
-      - python2.7
-      - python-setuptools
-      - python-pip
-    when: ansible_distribution_major_version|int < 20
-
-#  - name: Download pip for Python2
-#    get_url:
-#      url: https://bootstrap.pypa.io/get-pip.py
-#      dest: /tmp/.get-pip.py
-#      mode: 0644
-#      force: yes
-#
-#  - name: Install pip for Python2
-#    shell: python2 /tmp/.get-pip.py
-
   - name: Install required python packages
     pip:
+      # todo: freeze versions
       name:
-        - PyYAML>=3.11
-        - pyrsistent<0.17
-        - docker>=4.3.0
-        - docker-compose>=1.7.0
+        - PyYAML
+        - pyrsistent
+        - docker
+        - docker-compose
+      state: latest
 
   - name: Add key for docker repository
     apt_key:
