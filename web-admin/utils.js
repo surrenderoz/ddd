@@ -1,14 +1,15 @@
 function getJanusServers() {
     var servers = [];
+    if (window.location.protocol === 'https:') {
+        servers.push(
+            `wss://${window.location.hostname}:${portApiWss}`,
+            `https://${window.location.hostname}:${portApiHttps}/janus`,
+        );
+    }
     if (window.location.protocol === 'http:') {
         servers.push(
-            "ws://" + window.location.hostname + ":8188",
-            "http://" + window.location.hostname + ":8088/janus"
-        );
-    } else {
-        servers.push(
-            "wss://" + window.location.hostname + ":8989",
-            "https://" + window.location.hostname + ":8089/janus"
+            // insecure websockets strictly disabled: `ws://${window.location.hostname}:${portApiWs}`,
+            `http://${window.location.hostname}:${portApiHttp}/janus`,
         );
     }
 
