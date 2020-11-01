@@ -5,9 +5,9 @@
   connection: local
   become: yes
   vars_files:
-    - config_internal.yaml
+    - config.build.yaml
+    - config.defaults.yaml
     - config.yaml
-    - config_local.yaml
 
 - import_playbook: pre_requisites.yaml
 

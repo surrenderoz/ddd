@@ -4,9 +4,9 @@
   hosts: localhost
   connection: local
   vars_files:
-    - config_internal.yaml
+    - config.build.yaml
+    - config.defaults.yaml
     - config.yaml
-    - config_local.yaml
 
   tasks:
     - name: Prepare Diffie-Hellman parameters file

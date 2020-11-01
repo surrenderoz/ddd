@@ -5,9 +5,9 @@
   connection: local
   become: yes
   vars_files:
-    - config_internal.yaml
+    - config.build.yaml
+    - config.defaults.yaml
     - config.yaml
-    - config_local.yaml
 
   tasks:
   - name: Ensure the aPuppet installing on Ubuntu >= 16.04
