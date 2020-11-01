@@ -16,6 +16,6 @@
 
 - name: Set Python 3 interpreter for deployment
   set_fact:
-    ansible_python_interpreter: python3_abs_path.stdout
+    ansible_python_interpreter: "{{ python3_abs_path.stdout }}"
 
 - debug: var=ansible_python_interpreter
