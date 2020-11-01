@@ -1,6 +1,6 @@
 ---
 
-- name: Prepare Janus
+- name: Prepare Certbot
   hosts: localhost
   connection: local
   vars_files:
@@ -9,6 +9,9 @@
     - config.yaml
 
   tasks:
+    - name: Prepare Python 3
+      import_tasks: tasks_set_python3.yaml
+
     - name: Check settings
       import_tasks: tasks_check_settings.yaml
 
