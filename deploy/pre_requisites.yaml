@@ -33,10 +33,12 @@
     pip:
       # todo: freeze versions
       name:
-        - PyYAML
-        - pyrsistent
+        # for "docker_image" module
         - docker
+        # for "docker_compose" module
         - docker-compose
+        # for dig lookup
+        - dnspython
       state: latest
 
   - name: Add key for docker repository
