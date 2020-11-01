@@ -9,6 +9,9 @@
     - config_local.yaml
 
   tasks:
+    - name: Check settings
+      import_tasks: pre_check_settings.yaml
+
     - name: Ensure aPuppet is not running
 #      docker_compose:
 #        project_src: ../

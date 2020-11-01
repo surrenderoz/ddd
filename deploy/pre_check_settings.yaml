@@ -1,0 +1,14 @@
+- name: Ensure admin email is defined
+  fail:
+    msg: "Your aPuppet administrator email is not defined. Please define existing email address to deploy aPuppet in 'email' variable"
+  when: (email is not defined) or (email == None) or (email|length == 0)
+
+- name: Ensure hostname is defined
+  fail:
+    msg: "Your aPuppet hostname is not defined. Please define existing and working hostname to deploy aPuppet in 'hostname' variable"
+  when: (hostname is not defined) or (hostname == None) or (hostname|length == 0)
+
+- name: Ensure hostname can be resolved to one of available IP addresses
+  fail:
+    msg: "Your aPuppet hostname '{{ hostname }}' can not be resolved to one of local IP addresses ({{ ansible_all_ipv4_addresses }}). Please ensure your domain or DNS settings are actual"
+  when: lookup('dig', hostname) not in ansible_all_ipv4_addresses
