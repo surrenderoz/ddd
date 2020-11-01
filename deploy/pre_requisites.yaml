@@ -10,6 +10,10 @@
     - config_local.yaml
 
   tasks:
+  - name: Ensure the aPuppet installing on Ubuntu >= 16.04
+    fail:
+      msg: aPuppet need Ubuntu version 16.04 and later
+    when: not (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version|int >= 16)
 
   - name: Install required system packages
     apt:
