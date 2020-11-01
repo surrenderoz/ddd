@@ -10,7 +10,14 @@
   shell: "which python3"
   register: python3_abs_path
 
+- name: Get Python 3 version
+  shell: 'python3 -c "import platform; print(platform.python_version())"'
+  register: python3_version
+
 - name: Set Python 3 interpreter for deployment
   set_fact:
     ansible_python_interpreter: "{{ python3_abs_path.stdout }}"
 
+- name: Set Python 3 interpreter version
+  set_fact:
+    ansible_python_version: "{{ python3_version.stdout }}"
