@@ -10,7 +10,7 @@
 
   tasks:
     - name: Prepare Python 3
-      import_tasks: tasks_set_python3.yaml
+      import_tasks: tasks_python.yaml
 
     - name: Check settings
       import_tasks: tasks_check_settings.yaml

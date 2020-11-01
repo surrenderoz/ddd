@@ -9,6 +9,7 @@
     - config.yaml
 
   tasks:
+    - import_tasks: tasks_python.yaml
 
     - name: Process secret for all Janus API requests
       set_fact:
