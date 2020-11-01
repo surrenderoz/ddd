@@ -41,6 +41,11 @@
           with_fileglob:
             - ./templates/janus/*.jcfg
 
+    - name: Process web-admin configuration
+      template:
+        src: ./templates/web-admin/settings.js.j2
+        dest: ../web-admin/settings.js
+
     - name: Process docker-compose configuration
       template:
         src: ./templates/docker-compose/docker-compose.yaml.j2

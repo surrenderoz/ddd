@@ -4,10 +4,10 @@ var streamingOpaqueId = "streaming-" + opaqueId;
 var textroomOpaqueId = "textroom-" + opaqueId;
 
 // Janus
-var portApiHttp = 8088;
-var portApiHttps = 8089;
-var portApiWss = 8989;
-var apiSecret = null;
+var portApiHttp = {{ api_http_port }};
+var portApiHttps = {{ api_https_port }};
+var portApiWss = {{ api_wss_port }};
+var apiSecret = "{{ janus_api_secret }}";
 
 var janusServers = getJanusServers();
 var janusDebugLevel = 'all'; // ['warn', 'error'];
