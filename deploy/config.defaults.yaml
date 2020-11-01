@@ -32,10 +32,9 @@ rtp_port_range: 10000-10500
 ## SSL certificate
 ssl_cert: /etc/letsencrypt/live/{{ hostname }}/fullchain.pem
 ssl_cert_key: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
+# todo: разделить внутренние и внешние пути к сертификатам, внешние сделать слегка неявными :)
 
 ## Certbot (LetsEncrypt SSL certificate)
 
 # Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot
 share_email: true
-# Recreate and replace existing certificate on start in the future
-force_recreate_ssl_cert: true
