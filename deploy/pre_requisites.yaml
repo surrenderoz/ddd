@@ -31,15 +31,13 @@
 
   - name: Install required python packages
     pip:
-      # todo: freeze versions
       name:
         # for "docker_image" module
-        - docker
+        - docker==4.3.1
         # for "docker_compose" module
-        - docker-compose
+        - docker-compose==1.27.4
         # for dig lookup
-        - dnspython
-      state: latest
+        - dnspython==2.0.0
 
   - name: Add key for docker repository
     apt_key:
