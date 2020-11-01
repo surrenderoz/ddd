@@ -4,7 +4,7 @@
       - python3
       - python3-setuptools
       - python3-pip
-  when: ansible_distribution_major_version|int >= 20
+  #when: ansible_distribution_major_version|int >= 20
 
 - name: Get Python 3 path
   shell: which python3
