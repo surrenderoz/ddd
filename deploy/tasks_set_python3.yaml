@@ -10,8 +10,7 @@
   shell: "which python3"
   register: python3_abs_path
 
-- debug:
-  var: python3_abs_path
+- debug: var=python3_abs_path
 
 - name: Set Python 3 interpreter for deployment
   set_fact:
