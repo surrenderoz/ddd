@@ -18,7 +18,7 @@
             path: ./dist/conf/nginx/dhparams.pem
           register: dhparams_stat_result
 
-        - name: Generate Diffie-Hellman parameters file with 2048 bits size. NOTE THAT IT WILL TAKE REALLY MUCH TIME!
+        - name: Generate Diffie-Hellman parameters file with 2048 bits size. IT MAY TAKE A LONG TIME!
           # https://docs.ansible.com/ansible/2.9/modules/openssl_dhparam_module.html
           openssl_dhparam:
             path: ./dist/conf/nginx/dhparams.pem

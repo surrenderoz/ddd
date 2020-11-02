@@ -9,7 +9,7 @@
     - config.yaml
 
   tasks:
-    - name: Build Janus Gateway image
+    - name: Build Janus Gateway image. IT MAY TAKE A LONG TIME!
       docker_image:
         name: "{{ janus_image_name }}:{{ janus_image_tag }}"
         source: build
