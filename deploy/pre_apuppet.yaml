@@ -10,6 +10,7 @@
 
   tasks:
     - import_tasks: tasks_python.yaml
+    - import_tasks: tasks_check_settings.yaml
 
     - name: Process secret for all Janus API requests
       set_fact:

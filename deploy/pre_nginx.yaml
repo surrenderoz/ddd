@@ -9,6 +9,8 @@
     - config.yaml
 
   tasks:
+    - import_tasks: tasks_check_settings.yaml
+
     - name: Prepare Diffie-Hellman parameters file
       block:
         - name: Check that the Diffie-Hellman parameters file is exists
