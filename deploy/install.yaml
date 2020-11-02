@@ -14,9 +14,9 @@
 - import_playbook: pre_janus.yaml
 
 - import_playbook: pre_nginx.yaml
-  when: is_nginx_enabled == True
+  when: is_nginx_enabled == true
 
 - import_playbook: pre_apuppet.yaml
 
 - import_playbook: pre_certbot_first_cert.yaml
-  when: is_certbot_enabled == True
+  when: is_certbot_enabled == true
