@@ -1,7 +1,5 @@
 ---
 ## Common
-hostname:
-email:
 is_nginx_enabled: true
 is_certbot_enabled: true
 
