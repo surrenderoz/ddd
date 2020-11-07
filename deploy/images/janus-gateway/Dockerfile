@@ -115,11 +115,11 @@ RUN apt-get -y update \
 
 # libnice
 COPY --from=BUILD /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10.11.0
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so
+RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10 \
+ && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so \
+ && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10.11.0 \
+ && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10 \
+ && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so
 
 # libsrtp
 COPY --from=BUILD /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so.1
@@ -128,8 +128,8 @@ RUN ln -s /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so
 # usrsctp
 COPY --from=BUILD /usr/lib/libusrsctp.la /usr/lib/libusrsctp.la
 COPY --from=BUILD /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1.0.0
-RUN ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so
-RUN ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1
+RUN ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so \
+ && ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1
 
 # libwebsockets
 COPY --from=BUILD /usr/lib/libwebsockets.so.16 /usr/lib/libwebsockets.so.16
