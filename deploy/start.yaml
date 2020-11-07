@@ -12,7 +12,7 @@
     - ../config.yaml
 
   tasks:
-    - name: (Re)Start aPuppet
+    - name: (Re)Starting aPuppet
       docker_compose:
         project_src: ../
         state: present
