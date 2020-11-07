@@ -172,8 +172,11 @@ general: {
 # Finally, by default NIST P-256 certificates are generated (see #1997),
 # but RSA generation is still supported if you set 'rsa_private_key' to 'true'.
 certificates: {
-	#cert_pem = "{{ ssl_cert }}"
-	#cert_key = "{{ ssl_cert_key }}"
+	# todo: commented until resolve issue with letsencrypt, use selfsigned instead
+{% if ssl_enabled %}
+    # cert_pem = "/etc/letsencrypt/live/{{ hostname }}/fullchain.pem"
+	# cert_key = "/etc/letsencrypt/live/{{ hostname }}/privkey.pem"
+{% endif %}
 	#cert_pwd = "secretpassphrase"
 	dtls_accept_selfsigned = true
 	#dtls_ciphers = "your-desired-openssl-ciphers"

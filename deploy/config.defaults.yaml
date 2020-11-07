@@ -1,38 +1,35 @@
 ---
-## Common
-is_nginx_enabled: true
-is_certbot_enabled: true
 
 ## Janus
 # REST API
-api_http: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
+api_http: true
 api_http_port: 8088
 
 # REST API (secure)
-api_https: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
+api_https: true
 api_https_port: 8089
 
 # Admin REST API (Secure)
-admin_api_https: "false"  # "true" | "false" - strict! It is the string to paste into Janus config
+admin_api_https: false
 admin_api_https_port: 7889
 
 # Websockets API (Secure)
-api_wss: "true"  # "true" | "false" - strict! It is the string to paste into Janus config
+api_wss: true
 api_wss_port: 8989
 
 ## Nginx
+is_nginx_enabled: true
 web_http_port: 80
 web_https_port: 443
 
 ## RTP
 rtp_port_range: 10000-10500
 
-## SSL certificate
-ssl_cert: /etc/letsencrypt/live/{{ hostname }}/fullchain.pem
-ssl_cert_key: /etc/letsencrypt/live/{{ hostname }}/privkey.pem
-# todo: разделить внутренние и внешние пути к сертификатам, внешние сделать слегка неявными :)
-
-## Certbot (LetsEncrypt SSL certificate)
-
+## SSL and Certbot
+is_certbot_enabled: true
 # Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot
 share_email: true
+
+# Paid feature: custom SSL certificate
+# custom_ssl_cert: ./deploy/dist/ssl/my_company_ssl_cert.pem  # custom SSL certificate path (in PEM format)
+# custom_ssl_key: ./deploy/dist/ssl/my_company_ssl_cert_key.pem  # custom SSL certificate key path (in PEM format)

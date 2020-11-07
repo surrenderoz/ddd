@@ -25,6 +25,9 @@ services:
 {% if is_certbot_enabled %}
       - ./deploy/dist/ssl:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
+{% elif custom_ssl_cert and custom_ssl_key %}
+      - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
+      - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
 {% endif %}
       - ./web-admin:/var/www/web-admin/html
     restart: unless-stopped

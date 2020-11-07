@@ -6,9 +6,10 @@ events {
 }
 
 http {
+{% if ssl_enabled %}
     server {
-        listen {{ web_http_port}};
-        listen [::]:{{ web_http_port }};
+        listen {{ web_http_port}} http2;
+        listen [::]:{{ web_http_port }} http2;
         server_name .{{ hostname }};
 
         # LetsEncrypt ACME Challenge
@@ -22,15 +23,20 @@ http {
             return 301 https://$host$request_uri;
         }
     }
+{% endif %}
 
     server {
+{% if ssl_enabled %}
         listen {{ web_https_port }} ssl http2;
         listen [::]:{{ web_https_port }} ssl http2;
-
+{% else %}
+        listen {{ web_http_port}};
+        listen [::]:{{ web_http_port }};
+{% endif %}
         server_name .{{ hostname }};
-
-        ssl_certificate {{ ssl_cert }};
-        ssl_certificate_key {{ ssl_cert_key }};
+{% if ssl_enabled %}
+        ssl_certificate /etc/letsencrypt/live/{{ hostname }}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{ hostname }}/privkey.pem;
 
         server_tokens off;
         ssl_session_tickets off;
@@ -59,7 +65,7 @@ http {
         # OCSP stapling
         ssl_stapling on;
         ssl_stapling_verify on;
-
+{% endif %}
         # replace with the IP address of your resolver
         resolver 8.8.8.8;
 
@@ -79,7 +85,7 @@ http {
 
         ## Janus REST API
         location /janus {
-            proxy_pass http://127.0.0.1:8088/janus;
+            proxy_pass http://127.0.0.1:{{ api_http_port }}/janus;
 #            proxy_http_version 1.1;
 #            proxy_set_header Upgrade $http_upgrade;
 #            proxy_set_header Connection "upgrade";

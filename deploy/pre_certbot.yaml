@@ -39,7 +39,7 @@
 
     - name: Run certbot
       shell: |
-        case "{{ share_email }}" in
+        case "{% if share_email %}true{% else %}false{% endif %}" in
           "true") eff_arg="--eff-email" ;;
           "false") eff_arg="--no-eff-email" ;;
         esac
