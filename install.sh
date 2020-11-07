@@ -38,12 +38,8 @@ case ${distro_name} in
     echo "OK, start installing on actual LTS ${distro_name} ${distro_version} .."
     ansible_install_newstyle
     ;;
-  "20.10")
-    echo "Warning, start installing on actual non-LTS ${distro_name} ${distro_version}. Please, keep in mind support of this version ends in July 2021 .."
-    ansible_install_newstyle
-    ;;
   *)
-    echo "Could not install aPuppet on your Ubuntu version: $distro_version. We only support LTS versions since 2016 (16.04, 18.04, 20.04)"
+    echo "Could not install aPuppet on your Ubuntu version: $distro_version. We support only LTS Ubuntu versions: 16.04.*, 18.04.*, 20.04.*"
     exit 1
     ;;
   esac
