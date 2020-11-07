@@ -56,7 +56,7 @@ case ${distro_name} in
 esac
 
 echo "Start deploy aPuppet .."
-sudo ansible-playbook deploy/install.sh
+sudo ansible-playbook deploy/install.yaml
 
 echo "Start aPuppet .."
 sudo ansible-playbook deploy/start.yaml
