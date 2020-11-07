@@ -1,2 +1,2 @@
-janus_image_name: "janus-gateway"
+janus_image_name: "mryoda/janus-gateway"
 janus_image_tag: "0.10.6"
