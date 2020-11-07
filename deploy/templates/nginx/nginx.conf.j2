@@ -8,8 +8,8 @@ events {
 http {
 {% if ssl_enabled %}
     server {
-        listen {{ web_http_port}} http2;
-        listen [::]:{{ web_http_port }} http2;
+        listen {{ web_http_port}};
+        listen [::]:{{ web_http_port }};
         server_name .{{ hostname }};
 
         # LetsEncrypt ACME Challenge
