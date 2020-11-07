@@ -172,4 +172,4 @@ haproxy_acl.yml
 ems-result-*
 
 # Other
-deploy/config.yaml
+config.yaml

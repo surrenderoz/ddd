@@ -6,7 +6,7 @@
   vars_files:
     - config.build.yaml
     - config.defaults.yaml
-    - config.yaml
+    - ../config.yaml
 
   tasks:
     - name: Prepare Python 3

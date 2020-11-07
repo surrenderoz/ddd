@@ -7,7 +7,7 @@
   vars_files:
     - config.build.yaml
     - config.defaults.yaml
-    - config.yaml
+    - ../config.yaml
 
   tasks:
   - name: Ensure the aPuppet installing on Ubuntu >= 16.04

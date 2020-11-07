@@ -6,7 +6,7 @@
   vars_files:
     - config.build.yaml
     - config.defaults.yaml
-    - config.yaml
+    - ../config.yaml
 
   tasks:
     - import_tasks: tasks_check_settings.yaml
