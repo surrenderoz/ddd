@@ -16,4 +16,4 @@
 - name: Process SSL availability
   set_fact:
     ssl_enabled: True
-  when: is_certbot_enabled or (custom_ssl_cert is defined and custom_ssl_cert|len > 0 and custom_ssl_key is defined and custom_ssl_key|len > 0)
+  when: is_certbot_enabled or (custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0)
