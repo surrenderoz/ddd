@@ -17,4 +17,4 @@
 - import_playbook: pre_apuppet.yaml
 
 - import_playbook: pre_certbot.yaml
-  when: is_certbot_enabled == true
+  when: is_certbot_enabled and is_nginx_enabled

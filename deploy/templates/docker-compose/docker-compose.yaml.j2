@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-{% if is_certbot_enabled %}
+{% if is_certbot_enabled && is_nginx_enabled %}
   certbot:
     image: certbot/certbot:v1.4.0
     depends_on:
@@ -22,7 +22,7 @@ services:
     volumes:
       - ./deploy/dist/conf/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./deploy/dist/conf/nginx/dhparams.pem:/etc/nginx/dhparams.pem
-{% if is_certbot_enabled %}
+{% if is_certbot_enabled && is_nginx_enabled %}
       - ./deploy/dist/ssl:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
 {% elif custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0 %}
