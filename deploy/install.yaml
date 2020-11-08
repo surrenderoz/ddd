@@ -11,8 +11,6 @@
 
 - import_playbook: pre_requisites.yaml
 
-# - import_playbook: pre_janus.yaml
-
 - import_playbook: pre_nginx.yaml
   when: is_nginx_enabled == true
 
