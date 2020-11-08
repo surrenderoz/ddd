@@ -14,7 +14,7 @@
 
     - name: Process secret for all Janus API requests
       set_fact:
-        janus_api_secret: "{{ lookup('password', './dist/credentials/janus_api_secret length=6 chars=digits') }}"
+        janus_api_secret: "{{ lookup('password', './dist/credentials/janus_api_secret length=8 chars=ascii_letters,digits') }}"
 
     - name: Process secret for Janus Admin API requests
       set_fact:
