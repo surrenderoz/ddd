@@ -28,6 +28,7 @@ RUN apt-get update -y && \
 		ca-certificates \
 		golang \
         gtk-doc-tools \
+        # for libnice versions >= 0.1.18
         meson \
         ninja-build \
     && apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
@@ -84,7 +85,7 @@ RUN cd /tmp/sources/ && git clone https://boringssl.googlesource.com/boringssl \
 # Build Janus Gateway
 RUN cd /tmp/sources/ && git clone https://github.com/meetecho/janus-gateway.git \
     && cd janus-gateway \
-    && git checkout v0.10.6 \
+    && git checkout v0.10.7 \
     && sh autogen.sh \
     && ./configure \
       # General
@@ -113,30 +114,39 @@ RUN apt-get -y update \
 		libconfig9 \
 	&& apt-get autoremove -y && apt-get clean && rm -r /var/lib/apt/lists/*
 
-# libnice
+# COPY libnice
 COPY --from=BUILD /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0
-RUN ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10 \
+
+# COPY to /usr/lib
+COPY --from=BUILD \
+  ## SOURCES
+  # libsrtp
+  /usr/lib/libsrtp2.so.1 \
+  # usrsctp
+  /usr/lib/libusrsctp.la \
+  /usr/lib/libusrsctp.so.1.0.0 \
+  # libwebsockets
+  /usr/lib/libwebsockets.so.16 \
+  ## DESTINATION
+  /usr/lib/
+
+# RUN stuff
+RUN \
+  # libnice symlinks
+    ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so.10 \
  && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/local/lib/x86_64-linux-gnu/libnice.so \
  && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10.11.0 \
  && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so.10 \
- && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so
-
-# libsrtp
-COPY --from=BUILD /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so.1
-RUN ln -s /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so
-
-# usrsctp
-COPY --from=BUILD /usr/lib/libusrsctp.la /usr/lib/libusrsctp.la
-COPY --from=BUILD /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1.0.0
-RUN ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so \
- && ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1
-
-# libwebsockets
-COPY --from=BUILD /usr/lib/libwebsockets.so.16 /usr/lib/libwebsockets.so.16
-RUN ln -s /usr/lib/libwebsockets.so.16 /usr/lib/libwebsockets.so
-
-# BoringSSL
-# TODO: после тестирования работы станет понятно, нужно ли тащить либы, пока и так запускается после билда
+ && ln -s /usr/local/lib/x86_64-linux-gnu/libnice.so.10.11.0 /usr/lib/libnice.so \
+  # libsrtp symlinks
+ && ln -s /usr/lib/libsrtp2.so.1 /usr/lib/libsrtp2.so \
+  # usrsctp symlinks
+ && ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so \
+ && ln -s /usr/lib/libusrsctp.so.1.0.0 /usr/lib/libusrsctp.so.1 \
+  # libwebsockets symlinks
+ && ln -s /usr/lib/libwebsockets.so.16 /usr/lib/libwebsockets.so \
+  # Janus config dir
+ && mkdir /usr/local/etc/janus
 
 ## Janus Gateway
 # binaries
@@ -146,8 +156,6 @@ COPY --from=BUILD /usr/local/bin/janus-cfgconv /usr/local/bin/janus-cfgconv
 COPY --from=BUILD /usr/local/lib/janus /usr/local/lib/janus
 # assets, demos, etc
 COPY --from=BUILD /usr/local/share/janus /usr/local/share/janus
-# configs
-RUN mkdir /usr/local/etc/janus
 
 # SECURE ports (REST, Admin&Monitor REST, WebSockets, Admin&Monitor WebSockets)
 # EXPOSE 8089 7889 8989 7989  # default ports, but disabled due to "host" network mode
