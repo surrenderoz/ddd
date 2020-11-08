@@ -40,6 +40,9 @@ services:
       - ./deploy/dist/conf/janus:/usr/local/etc/janus
 {% if is_certbot_enabled %}
       - ./deploy/dist/ssl:/etc/letsencrypt
+{% elif custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0 %}
+      - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
+      - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
 {% endif %}
     network_mode: host
     restart: unless-stopped
