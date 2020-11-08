@@ -56,3 +56,9 @@ sudo ansible-playbook deploy/install.yaml
 
 echo "Start aPuppet .."
 sudo ansible-playbook deploy/start.yaml
+
+janus_api_secret=$(cat ./deploy/dist/credentials/janus_api_secret)
+echo "Janus API Secret (ex., for mobile apps): ${janus_api_secret}"
+
+#janus_admin_api_secret=${cat ./deploy/dist/credentials/janus_admin_api_secret}
+#echo "Janus Admin API Secret: ${janus_admin_api_secret}"
