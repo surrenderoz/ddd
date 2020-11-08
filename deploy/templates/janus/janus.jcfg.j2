@@ -178,7 +178,7 @@ certificates: {
 	cert_key = "/etc/letsencrypt/live/{{ hostname }}/privkey.pem"
 {% endif %}
 	#cert_pwd = "secretpassphrase"
-	dtls_accept_selfsigned = false
+	dtls_accept_selfsigned = true
 	#dtls_ciphers = "your-desired-openssl-ciphers"
 	#rsa_private_key = false
 }
