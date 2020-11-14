@@ -12,15 +12,15 @@ http {
         listen [::]:{{ web_http_port }};
         server_name .{{ hostname }};
 
-        # LetsEncrypt ACME Challenge
+        # LetsEncrypt ACME challenge path
         location ~ /.well-known/acme-challenge {
-          allow all;
-          root /var/www/certbot;
+            allow all;
+            root /var/www/certbot;
         }
 
-        # redirect to secure
+        # Redirect (soft) to secure side of the force
         location / {
-            return 301 https://$host$request_uri;
+            return 302 https://$host$request_uri;
         }
     }
 {% endif %}
@@ -72,7 +72,12 @@ http {
 
         include /etc/nginx/mime.types;
 
-        ## RTP Web Admin
+        # Redirect (soft) to Web Admin
+        location / {
+            return 302 $scheme://$host$request_uri;
+        }
+
+        # Web Admin
         location ^~ /web-admin/ {
             alias /var/www/web-admin/html/;
             index index.html;
@@ -84,7 +89,7 @@ http {
             proxy_cache_bypass $http_upgrade;
         }
 
-        ## Janus REST API
+        # Janus REST API
         location /janus {
             proxy_pass http://127.0.0.1:{{ api_http_port }}/janus;
 #            proxy_http_version 1.1;
