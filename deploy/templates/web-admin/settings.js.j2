@@ -4,9 +4,9 @@ var streamingOpaqueId = "streaming-" + opaqueId;
 var textroomOpaqueId = "textroom-" + opaqueId;
 
 // Janus
-var portApiHttp = {{ api_http_port }};
-var portApiHttps = {{ api_https_port }};
-var portApiWss = {{ api_wss_port }};
+{% if api_http %}var portApiHttp = {{ api_http_port }};{% endif %}
+{% if api_https %}var portApiHttps = {{ api_https_port }};{% endif %}
+{% if api_wss %}var portApiWss = {{ api_wss_port }};{% endif %}
 var apiSecret = "{{ janus_api_secret }}";
 
 var janusServers = getJanusServers();
@@ -33,4 +33,28 @@ toastr.options = {
 
     "onclick": null,
     "onHidden": null,
+}
+
+// Janus servers
+function getJanusServers() {
+    var servers = [];
+    if (window.location.protocol === 'https:') {
+        servers.push(
+{% if api_wss %}
+            `wss://${window.location.hostname}:${portApiWss}`,
+{% endif %}
+{% if api_https %}
+            `https://${window.location.hostname}:${portApiHttps}/janus`,
+{% endif %}
+        );
+    }
+    if (window.location.protocol === 'http:') {
+        servers.push(
+            // insecure websockets strictly disabled: `ws://${window.location.hostname}:${portApiWs}`,
+{% if api_http %}
+            `http://${window.location.hostname}:${portApiHttp}/janus`,
+{% endif %}
+        );
+    }
+    return servers;
 }

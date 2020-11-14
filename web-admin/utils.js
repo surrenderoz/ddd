@@ -1,39 +1,3 @@
-function getJanusServers() {
-    var servers = [];
-    if (window.location.protocol === 'https:') {
-        servers.push(
-            `wss://${window.location.hostname}:${portApiWss}`,
-            `https://${window.location.hostname}:${portApiHttps}/janus`,
-        );
-    }
-    if (window.location.protocol === 'http:') {
-        servers.push(
-            // insecure websockets strictly disabled: `ws://${window.location.hostname}:${portApiWs}`,
-            `http://${window.location.hostname}:${portApiHttp}/janus`,
-        );
-    }
-
-    // TODO: test
-    // servers = [];
-    // if (window.location.protocol === 'https:') {
-    //     servers.push(
-    //         "http://janus-rtp-remoteadmin.kuzmichev.dev:8088/janus",
-    //         "ws://janus-rtp-remoteadmin.kuzmichev.dev:8188",
-    //         //"ws://demo.h-mdm.com:8188",
-    //         //"http://demo.h-mdm.com:8088/janus",
-    //     );
-    // } else {
-    //     servers.push(
-    //         "https://janus-rtp-remoteadmin.kuzmichev.dev:8089/janus",
-    //         "wss://janus-rtp-remoteadmin.kuzmichev.dev:8989",
-    //         //"wss://demo.h-mdm.com:8989",
-    //         //"https://demo.h-mdm.com/janus"
-    //     );
-    // }
-    // TODO: end test
-    return servers;
-}
-
 function getDateString(jsonDate) {
     var when;
     if (jsonDate) {
