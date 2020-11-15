@@ -81,12 +81,14 @@ http {
         location ^~ /web-admin/ {
             alias /var/www/web-admin/html/;
             index index.html;
+        }
 
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
+        # static files will be served directly and cached
+        location ~* ^.+\.(?:css|cur|js|jpe?g|gif|ico|png|otf|ttf|eot|woff|woff2|svg)$ {
+            access_log off;
+            expires 3h;
+            add_header Cache-Control public;
+            tcp_nodelay off;
         }
 
         # Janus REST API
