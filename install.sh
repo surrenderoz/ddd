@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
 cleanup() {
-    return_value=$?
+  return_value=$?
+  if [[ ${return_value} == "0" ]]; then
+    echo "INSTALL SCRIPT COMPLETED"
+  else
     echo "INSTALL SCRIPT ERROR: ${return_value}"
-    exit $return_value
+  fi
+  exit $return_value
 }
 trap "cleanup" EXIT
 
@@ -56,9 +60,9 @@ sudo ansible-playbook deploy/install.yaml
 
 echo "Start aPuppet .."
 sudo ansible-playbook deploy/start.yaml
-
-janus_api_secret=$(cat ./deploy/dist/credentials/janus_api_secret)
-echo "Janus API Secret (ex., for mobile apps): ${janus_api_secret}"
-
-#janus_admin_api_secret=${cat ./deploy/dist/credentials/janus_admin_api_secret}
-#echo "Janus Admin API Secret: ${janus_admin_api_secret}"
+#
+#janus_api_secret=$(cat ./deploy/dist/credentials/janus_api_secret)
+#
+#echo "To control your mobile devices remotely, install the aPuppet Android agent and use the following server URL and secret:"
+#echo "URL: https://srv.apuppet.org/web-admin/"
+#echo "API Secret: ${janus_api_secret}"
