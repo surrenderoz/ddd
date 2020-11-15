@@ -173,3 +173,6 @@ ems-result-*
 
 # Other
 config.yaml
+web-admin/package-lock.json
+web-admin/package.json
+web-admin/dist
