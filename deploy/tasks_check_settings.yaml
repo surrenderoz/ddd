@@ -16,3 +16,9 @@
 - name: Process SSL availability
   set_fact:
     ssl_enabled: "{% if is_certbot_enabled or (custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0) %}true{% else %}false{% endif %}"
+
+- name: Ensures web-admin dist JS dir exists
+  file: path=./dist/web-admin/dist/js state=directory
+
+- name: Ensures web-admin dist CSS dir exists
+  file: path=./dist/web-admin/dist/css state=directory
