@@ -49,7 +49,6 @@ gulp.task('scripts', function(){
 gulp.task('deps-scripts', function() {
     return gulp.src(['js/lib/*.js'])
         .pipe(concat('deps.min.js'))
-        .pipe(terser())
         .pipe(size({
             title: 'Size of JS libs'
         }))
