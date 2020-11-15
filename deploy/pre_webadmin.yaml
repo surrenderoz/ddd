@@ -11,12 +11,12 @@
   tasks:
     - name: Get builder image for web-admin
       docker_image:
-        name: "{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
+        name: "{{ node_gulp_builder_image_publisher }}/{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
         source: pull
 
     - name: Build web-admin
       docker_container:
-        image: "{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
+        image: "{{ node_gulp_builder_image_publisher }}/{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
         name: "{{ node_gulp_builder_image_name }}-container"
         state: present
         volumes:
