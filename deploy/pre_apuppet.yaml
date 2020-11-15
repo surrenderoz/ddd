@@ -46,7 +46,7 @@
     - name: Process web-admin configuration
       template:
         src: ./templates/web-admin/settings.js.j2
-        dest: ../web-admin/settings.js
+        dest: ./dist/web-admin/dist/js/settings.js
 
     - name: Process docker-compose configuration
       template:

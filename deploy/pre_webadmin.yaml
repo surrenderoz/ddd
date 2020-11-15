@@ -1,0 +1,37 @@
+---
+
+- name: Prepare web admin application
+  hosts: localhost
+  connection: local
+  vars_files:
+    - config.build.yaml
+    - config.defaults.yaml
+    - ../config.yaml
+
+  tasks:
+    - name: Get builder image for web-admin
+      docker_image:
+        name: "{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
+        source: pull
+
+    - name: Build web-admin
+      docker_container:
+        image: "{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
+        name: "{{ node_gulp_builder_image_name }}-container"
+        state: present
+        volumes:
+          - ../web-admin:/app
+
+    - name: Remove builder
+      docker_container:
+        name: "{{ node_gulp_builder_image_name }}-container"
+        state: absent
+
+    - name: Release web-admin assets
+      copy:
+        src: "{{ item }}"
+        dest: ./dist/web-admin/{{ item | basename }}
+      with_fileglob:
+        - ../web-admin/dist
+        - ../web-admin/static
+        - ../web-admin/index.html

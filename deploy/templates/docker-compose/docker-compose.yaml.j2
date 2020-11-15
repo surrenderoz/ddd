@@ -29,7 +29,7 @@ services:
       - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
       - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
 {% endif %}
-      - ./web-admin:/var/www/web-admin/html
+      - ./deploy/dist/web-admin:/var/www/web-admin/html
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 {% endif %}
