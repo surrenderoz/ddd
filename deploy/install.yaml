@@ -18,3 +18,5 @@
 
 - import_playbook: pre_certbot.yaml
   when: is_certbot_enabled and is_nginx_enabled
+
+- import_playbook: pre_webadmin.yaml
