@@ -76,6 +76,7 @@ gulp.task('deps-scripts', function() {
         'js/lib/toastr.min.js'
     ])
         .pipe(concat('deps.min.js'))
+        .pipe(terser())
         .pipe(size({
             title: 'Size of JS libs'
         }))
