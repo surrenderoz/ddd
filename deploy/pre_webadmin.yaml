@@ -18,7 +18,7 @@
       docker_container:
         image: "{{ node_gulp_builder_image_publisher }}/{{ node_gulp_builder_image_name }}:{{ node_gulp_builder_image_tag }}"
         name: "{{ node_gulp_builder_image_name }}-container"
-        state: present
+        state: started
         volumes:
           - ../web-admin:/app
 
