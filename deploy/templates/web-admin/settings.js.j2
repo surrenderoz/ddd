@@ -9,7 +9,6 @@ var textroomOpaqueId = "textroom-" + opaqueId;
 {% if api_wss %}var portApiWss = {{ api_wss_port }};{% endif %}
 var apiSecret = "{{ janus_api_secret }}";
 
-var janusServers = getJanusServers();
 var janusDebugLevel = 'all'; // ['warn', 'error'];
 
 // Toastr options
@@ -58,3 +57,5 @@ function getJanusServers() {
     }
     return servers;
 }
+
+var janusServers = getJanusServers();
