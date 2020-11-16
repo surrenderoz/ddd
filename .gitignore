@@ -171,8 +171,7 @@ load_testing/initial_data_generator/data
 haproxy_acl.yml
 ems-result-*
 
-# Other
-config.yaml
+# Web-admin build stuff
 web-admin/package-lock.json
 web-admin/package.json
 web-admin/dist
