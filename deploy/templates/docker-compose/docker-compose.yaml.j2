@@ -12,10 +12,10 @@ services:
       - www-certbot-root:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 1d & wait $${!}; done;'"
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
         compress: "true"
-        max-size: 20m
+        max-size: "20m"
         max-file: 5
 {% endif %}
 
@@ -39,10 +39,10 @@ services:
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
         compress: "true"
-        max-size: 20m
+        max-size: "20m"
         max-file: 5
 {% endif %}
 
@@ -56,10 +56,10 @@ services:
       - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
       - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
     logging:
-      driver: "local"
+      driver: "json-file"
       options:
         compress: "true"
-        max-size: 20m
+        max-size: "20m"
         max-file: 5
 {% endif %}
     network_mode: host
