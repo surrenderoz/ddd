@@ -11,6 +11,12 @@ services:
       - ./deploy/dist/ssl:/etc/letsencrypt
       - www-certbot-root:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 1d & wait $${!}; done;'"
+    logging:
+      driver: "local"
+      options:
+        compress: true
+        max-size: 20m
+        max-file: 5
 {% endif %}
 
 {% if is_nginx_enabled %}
@@ -32,6 +38,12 @@ services:
       - ./deploy/dist/web-admin:/var/www/web-admin/html
     restart: unless-stopped
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    logging:
+      driver: "local"
+      options:
+        compress: true
+        max-size: 20m
+        max-file: 5
 {% endif %}
 
   janus:
@@ -43,6 +55,12 @@ services:
 {% elif custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0 %}
       - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
       - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
+    logging:
+      driver: "local"
+      options:
+        compress: true
+        max-size: 20m
+        max-file: 5
 {% endif %}
     network_mode: host
     restart: unless-stopped
