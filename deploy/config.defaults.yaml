@@ -29,7 +29,3 @@ rtp_port_range: 10000-10500
 is_certbot_enabled: true
 # Share your email with EFF (Electronic Frontier Foundation, a founding partner of the Let's Encrypt project and the non-profit organization that develops Certbot
 share_email: true
-
-# Paid feature: custom SSL certificate
-# custom_ssl_cert: ./deploy/dist/ssl/my_company_ssl_cert.pem  # custom SSL certificate path (in PEM format)
-# custom_ssl_key: ./deploy/dist/ssl/my_company_ssl_cert_key.pem  # custom SSL certificate key path (in PEM format)
