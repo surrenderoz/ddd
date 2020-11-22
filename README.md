@@ -126,6 +126,7 @@ _Важно: aPuppet создан для работы на выделенном 
 ![Main Screen](./docs/images/main.jpg)
 
 В web-admin необходимо ввести реквизиты доступа, после чего устройство запросит разрешение на получение содержимого экрана, и после подтверждения начнётся сессия удалённого управления:
+
 ![Sharing - request permission](./docs/images/sharing-request-permission.jpg)
 ![Sharing](./docs/images/sharing.jpg)
 
