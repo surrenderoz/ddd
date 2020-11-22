@@ -55,16 +55,15 @@ services:
 {% elif custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0 %}
       - {{ custom_ssl_cert }}:/etc/letsencrypt/live/{{ hostname }}/fullchain.pem
       - {{ custom_ssl_key }}:/etc/letsencrypt/live/{{ hostname }}/privkey.pem
+{% endif %}
+    network_mode: host
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         compress: "true"
         max-size: "20m"
         max-file: "5"
-{% endif %}
-    network_mode: host
-    restart: unless-stopped
-
 {% if is_certbot_enabled %}
 volumes:
   # WWW certbot root directory, eg. for ACME challenge (FROM nginx FOR certbot)
