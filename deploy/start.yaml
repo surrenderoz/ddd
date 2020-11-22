@@ -13,7 +13,7 @@
 
   tasks:
     - set_fact:
-        ssl_enabled: "{% if is_certbot_enabled or (custom_ssl_cert is defined and custom_ssl_cert|length > 0 and custom_ssl_key is defined and custom_ssl_key|length > 0) %}true{% else %}false{% endif %}"
+        ssl_enabled: "{% if is_certbot_enabled or %}true{% else %}false{% endif %}"
 
     - name: (Re)Starting aPuppet
       docker_compose:
