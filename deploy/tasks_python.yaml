@@ -11,7 +11,7 @@
         name:
           - dnspython==1.16.0
         executable: pip2
-  when: ansible_python.version.major| int == 2
+  when: ansible_python.version.major|int == 2
 
 - name: Process Python 3 as interpreter
   block:
