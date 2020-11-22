@@ -128,7 +128,7 @@ _Важно: aPuppet создан для работы на выделенном 
 ![Sharing - request permission](./docs/images/sharing-request-permission.jpg)
 ![Sharing](./docs/images/sharing.jpg)
 
-## Использование произвольного SSL-сертификата
+## Произвольный SSL-сертификат
 
 По умолчанию aPuppet использует бесплатные сертификаты от LetsEncrypt. На конец ноября 2020 года эти сертификаты работают практически во всех распространённых ОС и браузерах.
 
