@@ -19,11 +19,20 @@ input.form-control::placeholder{
 	position: relative;
 }
 
+.title-start {
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
 .btn-start {
 	font-size: 30px;
 	margin-top: 25px;
 	width: 200px;
 	padding-bottom: 12px;
+}
+
+.input-start {
+	font-size: 24px;
 }
 
 .fa-2 {
