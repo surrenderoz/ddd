@@ -326,6 +326,6 @@ _Read more about logging in [docker](https://docs.docker.com/engine/reference/co
 
 This is a web application for the remote access to the mobile device through a web browser. The app is written in HTML, CSS, and Javascript (WebRTC library is used for displaying the screencast and transferring gestures to a mobile device).
 
-The source code of the web application is stored in the folder `webadmin/`. During the deployment, it is compiled by using gulp: CSS and JS are minified and concatenated. The production files are stored in the folder `deploy/dist/web-admin`. In the same folder, a configuration file `settings.js` is stored, which contains the aPuppet settings (paths, ports, secrets).
+The source code of the web application is stored in the folder `web-admin/`. During the deployment, it is compiled by using gulp: CSS and JS are minified and concatenated. The production files are stored in the folder `deploy/dist/web-admin`. In the same folder, a configuration file `settings.js` is stored, which contains the aPuppet settings (paths, ports, secrets).
 
-If you need to modify the source code of the web admin application, modify the `webadmin` folder and run `./install.sh` to apply your changes.
+If you need to modify the source code of the web admin application, modify the `web-admin` folder and run `./install.sh` to apply your changes.

@@ -19,6 +19,12 @@ input.form-control::placeholder{
 	position: relative;
 }
 
+.btn-start {
+	font-size: 30px;
+	margin-top: 25px;
+	width: 200px;
+	padding-bottom: 12px;
+}
 
 .fa-2 {
 	font-size: 2em !important;
