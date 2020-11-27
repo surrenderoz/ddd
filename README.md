@@ -328,4 +328,9 @@ This is a web application for the remote access to the mobile device through a w
 
 The source code of the web application is stored in the folder `web-admin/`. During the deployment, it is compiled by using gulp: CSS and JS are minified and concatenated. The production files are stored in the folder `deploy/dist/web-admin`. In the same folder, a configuration file `settings.js` is stored, which contains the aPuppet settings (paths, ports, secrets).
 
-If you need to modify the source code of the web admin application, modify the `web-admin` folder and run `./install.sh` to apply your changes.
+If you need to modify the source code of the web admin application, modify the `web-admin` folder and run the following command to apply your changes:
+
+    ansible-playbook deploy/pre_webadmin.yaml
+
+Notice: `./install.sh` will also apply changes but it is executed much slower.
+
