@@ -208,11 +208,12 @@ Here's the list of available configuration parameters and their default values:
 ### Firewall configuration
 
 aPuppet uses the following incoming ports which should be allowed on your firewall or forwarded via NAT:
-    - **80/TCP** - used only by certbot to renew certificates
-    - **443/TCP** - used by nginx to display the web UI
-    - **8989/TCP** - WSS protocol used by WebRTC to play the video
-    - **8089/TCP** - used by the web application to communicate with Janus server (REST API)
-	- **10000-10500/UDP** - a set of UDP ports for the RTP screencast (the port is chosen dynamically by Janus).
+
+- **80/TCP** - used only by certbot to renew certificates
+- **443/TCP** - used by nginx to display the web UI
+- **8989/TCP** - WSS protocol used by WebRTC to play the video
+- **8089/TCP** - used by the web application to communicate with Janus server (REST API)
+- **10000-10500/UDP** - a set of UDP ports for the RTP screencast (the port is chosen dynamically by Janus).
 
 ### Setup options and use cases
 
