@@ -2,7 +2,7 @@
 
 ## Summary
 
-aPuppet is the open source engine for the remote control of Android-based devices and the remote support of their users. Devices are controlled from a web-based application.
+aPuppet is the open source engine providing remote access to Android-based devices for the purpose of technical support and maintenance. Devices are controlled from a web-based application.
 
 The software consists of:
 
@@ -10,6 +10,8 @@ The software consists of:
 - [nginx](https://nginx.org/). Web server for hosting the web application
 - [certbot](https://certbot.eff.org/). Agent managing SSL certificates issued by [LetsEncrypt](https://letsencrypt.org/)
 - web-admin. Web application for the remote control of mobile devices
+
+This project is the server module. The source code of the mobile agent is available at https://github.com/h-mdm/apuppet-android and also on [Google Play](https://play.google.com/store/apps/details?id=com.hmdm.control).
 
 ### Platform requirements
 
@@ -202,6 +204,15 @@ Here's the list of available configuration parameters and their default values:
 - SSL and Certbot
     - `is_certbot_enabled: true`. Enables Certbot. If you're not using a custom SSL certificate, it is recommended to enable Certbot, otherwise the connection will not be encrypted
     - `share_email: true`. Provides your email to [EFF](https://www.eff.org/) (Electronic Frontier Foundation), the Certbot developer company
+
+### Firewall configuration
+
+aPuppet uses the following incoming ports which should be allowed on your firewall or forwarded via NAT:
+    - **80/TCP** - used only by certbot to renew certificates
+    - **443/TCP** - used by nginx to display the web UI
+    - **8989/TCP** - WSS protocol used by WebRTC to play the video
+    - **8089/TCP** - used by the web application to communicate with Janus server (REST API)
+	- **10000-10500/UDP** - a set of UDP ports for the RTP screencast (the port is chosen dynamically by Janus).
 
 ### Setup options and use cases
 
