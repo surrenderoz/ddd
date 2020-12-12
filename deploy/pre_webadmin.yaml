@@ -39,6 +39,6 @@
     - name: Release web-admin assets
       copy: src={{ item.src }} dest={{ item.dest }}
       with_items:
-       - { src: '../web-admin/dist', dest: './dist/web-admin/' }
-       - { src: '../web-admin/static', dest: './dist/web-admin/' }
-       - { src: '../web-admin/index.html', dest: './dist/web-admin/' }
+        - { src: '../web-admin/dist', dest: './dist/web-admin/' }
+        - { src: '../web-admin/static', dest: './dist/web-admin/' }
+        - { src: '../web-admin/index.html', dest: './dist/web-admin/' }
