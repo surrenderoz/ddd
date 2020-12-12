@@ -83,6 +83,13 @@ $(document).ready(function () {
                             bootbox.alert("Ошибка подключения к сессии: " + error);
                         },
 
+                        iceState: function (state) {
+                            console.debug("textroom: ICE state changed to " + state)
+                        },
+                        webrtcState: function (on) {
+                            console.debug("textroom: WebRTC PeerConnection is " + (on ? "UP" : "DOWN") + " now")
+                        },
+
                         slowLink: function(uplink, lost){
                             ui.showWarning(`Network problems`, 'Device management', null, null, 2000);
                         },
@@ -172,6 +179,13 @@ $(document).ready(function () {
                         error: function (error) {
                             console.error("streaming: error attaching plugin", error);
                             ui.showError(`'Streaming error: ${error}`, 'streaming_error');
+                        },
+
+                        iceState: function (state) {
+                            console.debug("streaming: ICE state changed to " + state)
+                        },
+                        webrtcState: function (on) {
+                            console.debug("streaming: WebRTC PeerConnection is " + (on ? "UP" : "DOWN") + " now")
                         },
 
                         slowLink: function(uplink, lost){
