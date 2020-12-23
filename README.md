@@ -186,6 +186,8 @@ aPuppet includes several configuration files:
 Here's the list of available configuration parameters and their default values:
 - `hostname`. The domain used to accept remote control connections from mobile devices
 - `email`. Administrator's email used to generate a LetsEncrypt certificate and get notifications from [LetsEncrypt](https://letsencrypt.org/)
+- `nat`. If aPuppet is installed behind NAT you should set this flag: `nat: true`
+- `public_ip`. Public IP is used if aPuppet is behind NAT. By default, it is determined by resolving your hostname via DNS, and can be overridden in config.yaml
 - Janus
     - `api_http: true`. Allows REST API over the non-encrypted HTTP protocol. Since Nginx proxy uses HTTP, it is recommended to set it to true
     - `api_http_port: 8088`. HTTP port for REST API 
@@ -214,6 +216,8 @@ aPuppet uses the following incoming ports which should be allowed on your firewa
 - **8989/TCP** - WSS protocol used by WebRTC to play the video
 - **8089/TCP** - used by the web application to communicate with Janus server (REST API)
 - **10000-10500/UDP** - a set of UDP ports for the RTP screencast (the port is chosen dynamically by Janus).
+
+*Notice: aPuppet requires enabling all incoming and outgoing UDP traffic, especially if you're behind a NAT.*
 
 ### Setup options and use cases
 
