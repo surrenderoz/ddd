@@ -70,7 +70,7 @@ Notice: to get the source code of the premium version, contact the sales at http
 
 Change the directory to the project directory:
 
-    cd remote-control
+    cd apuppet-server
 
 Edit the file `config.yaml` and setup the domain name where aPuppet will be installed and the administrator's email: 
 
@@ -133,7 +133,7 @@ In the Premium version, you can use any HTTPS certificate. Please fill in the co
 
 In most cases, aPuppet can be updated by renewing the source codes and running `./install.sh`.
 
-    cd remote-control
+    cd apuppet-server
     git pull
     sudo ./install.sh
 
@@ -250,7 +250,7 @@ To implement this option, turn off certbot and nginx in `config.yaml`:
 
 Before executing commands, change the directory to the one where aPuppet is installed:
 
-    cd ~/remote-control
+    cd ~/apuppet-server
 
 The system is based on `docker-compose`, therefore you need to use docker-compose commands to start, restart, stop, and other aPuppet management actions.
 
