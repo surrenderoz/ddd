@@ -35,3 +35,7 @@ share_email: true
 public_ip: ""
 # If aPuppet is installed behind NAT you should enable this flag in config.yaml
 nat: false
+
+## Misc
+# Chars for generated tokens & passwords - without visual collisions (l I 1, o O 0)
+password_chars: "A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,T,U,V,W,Z,Y,Z,a,b,c,d,e,f,g,h,j,k,m,n,p,q,r,s,t,u,v,w,x,y,z,2,3,4,5,6,7,8,9"
