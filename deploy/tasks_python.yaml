@@ -2,7 +2,9 @@
   block:
     - name: Install python2 pip
       package:
-        name: python-pip
+        name: 
+          - python-pip
+          - python-netaddr
         state: latest
 
     - name: Install dnslookup library for python2
